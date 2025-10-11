@@ -14,7 +14,8 @@ namespace EstacionamentoTech.Models.Tabelas
             { "Id", typeof(int) },
             { "Nome", typeof(string) },
             { "Ano", typeof(int) },
-            { "Tipo", typeof(string) }
+            { "Tipo", typeof(string) },
+            { "Placa", typeof(string) }
         };
     }
 }
