@@ -1,6 +1,7 @@
 ﻿using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Asn1;
 
 namespace EstacionamentoTech.Data
 {
@@ -44,6 +45,55 @@ namespace EstacionamentoTech.Data
                     }
                 }
                 return listaEntidades;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public void Insert(ITabela tabela, IEntityModel registro) 
+        {
+            string campos = string.Join(", ", tabela.CamposTabela.Keys  
+                                                            .Where(c =>
+                                                                !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
+                                                                && registro.GetType()
+                                                                            .GetProperty(c)?
+                                                                            .GetValue(registro) != null));
+
+            string values = string.Join(", ", tabela.CamposTabela.Keys
+                                                            .Where(c =>
+                                                                !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
+                                                                && registro.GetType()
+                                                                            .GetProperty(c)?
+                                                                            .GetValue(registro) != null)
+                                                            .Select(c => 
+                                                            {
+                                                                var valor = registro.GetType().GetProperty(c)?.GetValue(registro);
+                                                                if (valor is string || valor is DateTime)
+                                                                    return $"'{valor}'";
+                                                                else if (valor is bool b)
+                                                                    return b ? "1" : "0";
+                                                                else if (valor is decimal d)
+                                                                    return d.ToString().Replace(",",".");
+                                                                else
+                                                                    return valor?.ToString() ?? "NULL";
+                                                            })
+                                       );
+
+            string strComando = $@"INSERT INTO 
+                                {dataBaseName}.{tabela.NomeTabela}({campos})
+                                VALUES ({values})";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+                comando.ExecuteNonQuery();
             }
             catch (Exception ex)
             {

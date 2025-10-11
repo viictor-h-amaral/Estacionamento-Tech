@@ -10,6 +10,7 @@ namespace EstacionamentoTech.MVC.Controllers
     public class ClientesController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly Context _contexto;
 
         public ClientesController(ILogger<HomeController> logger)
         {
@@ -17,21 +18,28 @@ namespace EstacionamentoTech.MVC.Controllers
             _contexto = new Context();
         }
 
-        private readonly Context _contexto;
-        /*public ClientesController(Context contexto)
-        {
-            _contexto = contexto;
-        }*/
-
+        [HttpGet]
         public IActionResult Index()
         {
             var clientes = _contexto.GetMany<Cliente>(new TabelaClientes());
             return View(clientes);
         }
 
+        [HttpGet]
         public IActionResult NovoCliente()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult NovoCliente(Cliente cliente)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Insert(new TabelaClientes(), cliente);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cliente);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
