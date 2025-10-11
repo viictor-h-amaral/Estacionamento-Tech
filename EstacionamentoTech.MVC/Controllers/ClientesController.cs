@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using EstacionamentoTech.Data;
+using EstacionamentoTech.Models;
+using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +14,19 @@ namespace EstacionamentoTech.MVC.Controllers
         public ClientesController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            _contexto = new Context();
         }
+
+        private readonly Context _contexto;
+        /*public ClientesController(Context contexto)
+        {
+            _contexto = contexto;
+        }*/
 
         public IActionResult Index()
         {
-            return View();
+            var clientes = _contexto.GetMany<Cliente>(new TabelaClientes());
+            return View(clientes);
         }
 
         public IActionResult NovoCliente()

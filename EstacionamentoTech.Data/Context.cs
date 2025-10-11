@@ -1,0 +1,58 @@
+﻿using EstacionamentoTech.Models;
+using EstacionamentoTech.Models.Tabelas;
+using MySql.Data.MySqlClient;
+
+namespace EstacionamentoTech.Data
+{
+    public class Context
+    {
+        private MySqlConnection _connection;
+        private string dataBaseName = "estacionamentotechdb";
+        public Context() 
+        {
+            _connection = new MySqlConnection(Conexao.strConexao);
+        }
+
+        public IEnumerable<T> GetMany<T>(ITabela tabela, string? criterioWhere = null) where T : class, IEntityModel
+        {
+            var listaEntidades = new List<T>();
+
+            string whereClause = criterioWhere is null ? "" : $"WHERE {criterioWhere}";
+            string strComando = $@"SELECT * 
+                                FROM {dataBaseName}.{tabela.NomeTabela} A
+                                {whereClause}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                using (MySqlDataReader leitorDados = comando.ExecuteReader())
+                {
+                    while (leitorDados.Read())
+                    {
+                        T entidade = Activator.CreateInstance<T>();
+                        foreach (var campo in tabela.CamposTabela)
+                        {
+                            var valor = leitorDados[campo.Key];
+                            if (valor != DBNull.Value)
+                            {
+                                entidade.GetType().GetProperty(campo.Key)?.SetValue(entidade, Convert.ChangeType(valor, campo.Value));
+                            }
+                        }
+                        listaEntidades.Add(entidade);
+                    }
+                }
+                return listaEntidades;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+    }
+}
