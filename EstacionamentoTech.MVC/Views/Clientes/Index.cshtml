@@ -36,8 +36,8 @@
 					@cliente.Nome
 				</td>
 				<td>
-					<a asp-action="Editar" asp-route-id="cliente.Id" class="btn btn-secondary">Editar</a> |
-					<a asp-action="Deletar" asp-route-id="cliente.Id" class="btn btn-danger">Deletar</a>
+					<a asp-action="EditarCliente" asp-route-id="@cliente.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="Deletar" asp-route-id="@cliente.Id" class="btn btn-danger">Deletar</a>
 				</td>
 			</tr>
 		}

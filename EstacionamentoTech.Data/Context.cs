@@ -99,5 +99,51 @@ namespace EstacionamentoTech.Data
                 _connection.Close();
             }
         }
+
+        public void Update(ITabela tabela, IEntityModel registro)
+        {
+            IDictionary<string, string> campoValor = new Dictionary<string, string>();
+
+            IList<string> campos = tabela.CamposTabela.Keys.Where(c =>
+                                                                    !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
+                                                                        && 
+                                                                    registro
+                                                                        .GetType()
+                                                                        .GetProperty(c)?
+                                                                        .GetValue(registro) != null
+                                                                )
+                                                            .ToList();
+            foreach (string campo in campos)
+            {
+                string valor = ObjetoParaStringConversor
+                                .ConverterParaString(registro
+                                                        .GetType()
+                                                        .GetProperty(campo)?
+                                                        .GetValue(registro));
+                campoValor.Add(campo, valor);
+            }
+
+            string strComando = $@"UPDATE  
+                                {dataBaseName}.{tabela.NomeTabela}
+                                SET {
+                                        string.Join(", ", campoValor.Keys.Select(c => $"{c} = {campoValor[c]}") )
+                                    }
+                                WHERE Id = {registro.Id}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+                comando.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
     }
 }

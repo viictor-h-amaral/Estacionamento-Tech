@@ -42,6 +42,27 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(cliente);
         }
 
+        [HttpGet]
+        public IActionResult EditarCliente(int id)
+        {
+            var cliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {id}").FirstOrDefault();
+            if (cliente != null)
+                return View(cliente);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult EditarCliente(Cliente cliente)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Update(new TabelaClientes(), cliente);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cliente);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

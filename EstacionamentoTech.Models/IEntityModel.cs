@@ -8,6 +8,6 @@ namespace EstacionamentoTech.Models
 {
     public interface IEntityModel
     {
-        
+        public int Id { get; set; }
     }
 }
