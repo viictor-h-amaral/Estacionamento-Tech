@@ -1,4 +1,5 @@
-﻿using EstacionamentoTech.Models;
+﻿using EstacionamentoTech.Data.Utilidades;
+using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Asn1;
@@ -74,14 +75,8 @@ namespace EstacionamentoTech.Data
                                                             .Select(c => 
                                                             {
                                                                 var valor = registro.GetType().GetProperty(c)?.GetValue(registro);
-                                                                if (valor is string || valor is DateTime)
-                                                                    return $"'{valor}'";
-                                                                else if (valor is bool b)
-                                                                    return b ? "1" : "0";
-                                                                else if (valor is decimal d)
-                                                                    return d.ToString().Replace(",",".");
-                                                                else
-                                                                    return valor?.ToString() ?? "NULL";
+                                                                return ObjetoParaStringConversor
+                                                                        .ConverterParaString(valor);
                                                             })
                                        );
 

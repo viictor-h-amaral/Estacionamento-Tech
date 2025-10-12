@@ -1,0 +1,64 @@
+﻿@model IEnumerable<EstacionamentoTech.Models.TabelaValores>
+
+@{
+	ViewData["Title"] = "Vigências";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+	<a asp-action="NovaVigencia" class="btn btn-primary">Adicionar Nova Vigência</a>
+</p>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.DataInicio)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.DataFim)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ValorHoraInicial)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ValorHoraAdicional)
+			</th>
+			<th>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach (var vigencia in Model)
+		{
+			<tr>
+				<td>
+					@vigencia.Id
+				</td>
+				<td>
+					@vigencia.DataInicio
+				</td>
+				<td>
+					@vigencia.DataFim
+				</td>
+				<td>
+					@vigencia.ValorHoraInicial
+				</td>
+				<td>
+					@vigencia.ValorHoraAdicional
+				</td>
+				<td>
+					<a asp-action="Editar" asp-route-id="vigencia.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="Deletar" asp-route-id="vigencia.Id" class="btn btn-danger">Deletar</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+
+</table>

@@ -12,10 +12,10 @@ namespace EstacionamentoTech.Models.Tabelas
         public IDictionary<string, Type> CamposTabela => new Dictionary<string, Type>
         {
             { "Id", typeof(int) },
-            { "dataInicio", typeof(string) },
-            { "dataFim", typeof(int) },
-            { "valorHoraInicial", typeof(string) },
-            { "valorHoraAdicional", typeof(string) }
+            { "DataInicio", typeof(DateTime) },
+            { "DataFim", typeof(DateTime) },
+            { "ValorHoraInicial", typeof(decimal) },
+            { "ValorHoraAdicional", typeof(decimal) }
         };
     }
 }
