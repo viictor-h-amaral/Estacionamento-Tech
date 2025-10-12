@@ -59,25 +59,22 @@ namespace EstacionamentoTech.Data
 
         public void Insert(ITabela tabela, IEntityModel registro) 
         {
-            string campos = string.Join(", ", tabela.CamposTabela.Keys  
+            IEnumerable<string> listaCampos = tabela.CamposTabela.Keys
                                                             .Where(c =>
                                                                 !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
                                                                 && registro.GetType()
                                                                             .GetProperty(c)?
                                                                             .GetValue(registro) != null));
 
-            string values = string.Join(", ", tabela.CamposTabela.Keys
-                                                            .Where(c =>
-                                                                !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
-                                                                && registro.GetType()
-                                                                            .GetProperty(c)?
-                                                                            .GetValue(registro) != null)
-                                                            .Select(c => 
-                                                            {
-                                                                var valor = registro.GetType().GetProperty(c)?.GetValue(registro);
-                                                                return ObjetoParaStringConversor
-                                                                        .ConverterParaString(valor);
-                                                            })
+            string campos = string.Join(", ", listaCampos);
+
+            string values = string.Join(", ", listaCampos
+                                                    .Select(c => 
+                                                    {
+                                                        var valor = registro.GetType().GetProperty(c)?.GetValue(registro);
+                                                        return ObjetoParaStringConversor
+                                                                .ConverterParaString(valor);
+                                                    })
                                        );
 
             string strComando = $@"INSERT INTO 
