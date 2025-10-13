@@ -1,0 +1,46 @@
+﻿@model EstacionamentoTech.Models.TabelaValores
+
+@{
+	ViewData["Title"] = "Editar Vigência";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+<hr>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<form asp-action="EditarVigencia">
+			<div class="form-group">
+				<label asp-for="DataInicio" class="control-label"></label>
+				<input asp-for="DataInicio" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="DataFim" class="control-label"></label>
+				<input asp-for="DataFim" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="ValorHoraInicial" class="control-label"></label>
+				<input asp-for="ValorHoraInicial" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="ValorHoraAdicional" class="control-label"></label>
+				<input asp-for="ValorHoraAdicional" class="form-control" />
+			</div>
+			<br />
+			<div class="form-group">
+				<input type="submit" value="Salvar" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+
+</div>
+
+<hr />
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

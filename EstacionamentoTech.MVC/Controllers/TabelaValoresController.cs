@@ -42,6 +42,27 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(vigencia);
         }
 
+        [HttpGet]
+        public IActionResult EditarVigencia(int id)
+        {
+            var vigencia = _contexto.GetMany<TabelaValores>(new TabelaTabelaValores(), $"id = {id}").FirstOrDefault();
+            if (vigencia != null)
+                return View(vigencia);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult EditarVigencia(TabelaValores vigencia)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Update(new TabelaTabelaValores(), vigencia);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(vigencia);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -54,8 +54,8 @@
 					@vigencia.ValorHoraAdicional
 				</td>
 				<td>
-					<a asp-action="Editar" asp-route-id="vigencia.Id" class="btn btn-secondary">Editar</a> |
-					<a asp-action="Deletar" asp-route-id="vigencia.Id" class="btn btn-danger">Deletar</a>
+					<a asp-action="EditarVigencia" asp-route-id="@vigencia.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="DeletarVigencia" asp-route-id="@vigencia.Id" class="btn btn-danger">Deletar</a>
 				</td>
 			</tr>
 		}
