@@ -12,6 +12,7 @@ namespace EstacionamentoTech.Models.Tabelas
         public IDictionary<string, Type> CamposTabela => new Dictionary<string, Type>
         {
             { "Id", typeof(int) },
+            { "Cliente", typeof(int) },
             { "Nome", typeof(string) },
             { "Ano", typeof(int) },
             { "Tipo", typeof(string) },
