@@ -64,7 +64,7 @@ namespace EstacionamentoTech.Data
                                                                 !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
                                                                 && registro.GetType()
                                                                             .GetProperty(c)?
-                                                                            .GetValue(registro) != null));
+                                                                            .GetValue(registro) != null);
 
             string campos = string.Join(", ", listaCampos);
 
