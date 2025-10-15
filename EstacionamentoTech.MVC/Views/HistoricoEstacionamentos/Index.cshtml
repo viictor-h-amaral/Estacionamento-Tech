@@ -1,0 +1,76 @@
+﻿@model IEnumerable<EstacionamentoTech.Models.HistoricoEstacionamentos>
+
+@{
+	ViewData["Title"] = "Histórico de estacionamentos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+	<a asp-action="NovoEstacionamento" class="btn btn-primary" >Adicionar Novo Histórico de Estacionamento</a>
+</p>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Veiculo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Entrada)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Saida)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.HorasCobradas)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ValorCobrado)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Pago)
+			</th>
+			<th>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach(var estacionamento in Model)
+		{
+			<tr>
+				<td>
+					@estacionamento.Id
+				</td>
+				<td>
+					@estacionamento.Veiculo
+				</td>
+				<td>
+					@estacionamento.Entrada
+				</td>
+				<td>
+					@estacionamento.Saida
+				</td>
+				<td>
+					@estacionamento.HorasCobradas
+				</td>
+				<td>
+					@estacionamento.ValorCobrado
+				</td>
+				<td>
+					@estacionamento.Pago
+				</td>
+				<td>
+					<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="Deletar" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+
+</table>

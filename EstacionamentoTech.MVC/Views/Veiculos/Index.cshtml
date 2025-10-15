@@ -21,6 +21,9 @@
 				@Html.DisplayNameFor(model => model.Nome)
 			</th>
 			<th>
+				@Html.DisplayNameFor(model => model.Cliente)
+			</th>
+			<th>
 				@Html.DisplayNameFor(model => model.Ano)
 			</th>
 			<th>
@@ -45,6 +48,9 @@
 					@veiculo.Nome
 				</td>
 				<td>
+					@veiculo.Cliente
+				</td>
+				<td>
 					@veiculo.Ano
 				</td>
 				<td>
@@ -54,8 +60,8 @@
 					@veiculo.Placa
 				</td>
 				<td>
-					<a asp-action="Editar" asp-route-id="veiculo.Id" class="btn btn-secondary">Editar</a> |
-					<a asp-action="Deletar" asp-route-id="veiculo.Id" class="btn btn-danger">Deletar</a>
+					<a asp-action="EditarVeiculo" asp-route-id="@veiculo.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="DeletarVeiculo" asp-route-id="@veiculo.Id" class="btn btn-danger">Deletar</a>
 				</td>
 			</tr>
 		}

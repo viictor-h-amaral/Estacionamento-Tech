@@ -4,6 +4,7 @@ using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MySqlX.XDevAPI;
 
 namespace EstacionamentoTech.MVC.Controllers
@@ -39,6 +40,38 @@ namespace EstacionamentoTech.MVC.Controllers
             if (ModelState.IsValid)
             {
                 _contexto.Insert(new TabelaVeiculo(), veiculo);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(veiculo);
+        }
+
+        [HttpGet]
+        public IActionResult EditarVeiculo(int id)
+        {
+            var veiculo = _contexto.GetMany<Veiculo>(new TabelaVeiculo(), $"id = {id}").FirstOrDefault();
+            if (veiculo != null)
+            {
+                List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Nome,
+                        Selected = c.Id == veiculo.Cliente
+                    }).ToList();
+
+                ViewBag.Clientes = clientes;
+                return View(veiculo);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult EditarVeiculo(Veiculo veiculo)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Update(new TabelaVeiculo(), veiculo);
                 return RedirectToAction(nameof(Index));
             }
             return View(veiculo);
