@@ -31,6 +31,14 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpGet]
         public IActionResult NovoVeiculo()
         {
+            List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Nome
+                    }).ToList();
+
+            ViewBag.Clientes = clientes;
             return View();
         }
 
