@@ -24,20 +24,13 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo())
-                .Select(v =>
-                            new VeiculoViewModel()
-                            {
-                                Id = v.Id,
-                                Cliente = v.Cliente,
-                                Nome = v.Nome,
-                                Ano = v.Ano,
-                                Tipo = v.Tipo,
-                                Placa = v.Placa,
-                                NomeCliente = _contexto.GetOneOrNull<Cliente>(new TabelaClientes(), $"id = {v.Cliente}")
-                                                        ?.Nome ?? " -- "
-                            });
-            
+            var veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo());
+            foreach (var veiculo in veiculos)
+            {
+                veiculo.NomeCliente = _contexto.GetOneOrNull<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}")
+                                                        ?.Nome ?? " -- ";
+            }
+
             return View(veiculos);
         }
 
