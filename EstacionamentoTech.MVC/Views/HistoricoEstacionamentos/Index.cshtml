@@ -18,7 +18,10 @@
 				@Html.DisplayNameFor(model => model.Id)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Veiculo)
+				@Html.DisplayNameFor(model => model.IdentificacaoVeiculo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Proprietario)
 			</th>
 			<th>
 				@Html.DisplayNameFor(model => model.Entrada)
@@ -48,7 +51,10 @@
 					@estacionamento.Id
 				</td>
 				<td>
-					@estacionamento.Veiculo
+					@estacionamento.IdentificacaoVeiculo
+				</td>
+				<td>
+					@estacionamento.Proprietario
 				</td>
 				<td>
 					@estacionamento.Entrada

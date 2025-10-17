@@ -16,7 +16,7 @@
 		<form asp-action="NovoEstacionamento">
 			<div class="form-group">
 				<label asp-for="Veiculo" class="control-label"></label>
-				<input asp-for="Veiculo" class="form-control" />
+				@Html.DropDownList("Veiculo", (IEnumerable<SelectListItem>)ViewBag.Veiculos, "Selecione o veículo")
 			</div>
 			<div class="form-group">
 				<label asp-for="Entrada" class="control-label"></label>
@@ -24,19 +24,19 @@
 			</div>
 			<div class="form-group">
 				<label asp-for="Saida" class="control-label"></label>
-				<input asp-for="Saida" class="form-control" />
+				<input asp-for="Saida" class="form-control" readonly />
 			</div>
 			<div class="form-group">
 				<label asp-for="HorasCobradas" class="control-label"></label>
-				<input asp-for="HorasCobradas" class="form-control" />
+				<input asp-for="HorasCobradas" class="form-control" readonly />
 			</div>
 			<div class="form-group">
 				<label asp-for="ValorCobrado" class="control-label"></label>
-				<input asp-for="ValorCobrado" class="form-control" />
+				<input asp-for="ValorCobrado" class="form-control" readonly />
 			</div>
 			<div class="form-group">
 				<label asp-for="Pago" class="control-label"></label>
-				<input type="checkbox" asp-for="Pago" class="form-check-input" autofocus />
+				<input type="checkbox" asp-for="Pago" class="form-check-input" readonly />
 			</div>
 			<br />
 			<div class="form-group">
