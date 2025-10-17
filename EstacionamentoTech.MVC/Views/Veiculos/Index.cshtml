@@ -42,22 +42,22 @@
 		{
 			<tr>
 				<td>
-					@veiculo.Id
+					@Html.DisplayFor(model => veiculo.Id)
 				</td>
 				<td>
-					@veiculo.Nome
+					@Html.DisplayFor(model => veiculo.Nome)
 				</td>
 				<td>
-					@veiculo.NomeCliente
+					@Html.DisplayFor(model => veiculo.NomeCliente)
 				</td>
 				<td>
-					@veiculo.Ano
+					@Html.DisplayFor(model => veiculo.Ano)
 				</td>
 				<td>
-					@veiculo.Tipo
+					@Html.DisplayFor(model => veiculo.Tipo)
 				</td>
 				<td>
-					@veiculo.Placa
+					@Html.DisplayFor(model => veiculo.Placa)
 				</td>
 				<td>
 					<a asp-action="EditarVeiculo" asp-route-id="@veiculo.Id" class="btn btn-secondary">Editar</a> |

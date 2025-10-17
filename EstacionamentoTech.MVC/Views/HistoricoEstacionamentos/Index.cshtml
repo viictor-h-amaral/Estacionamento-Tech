@@ -48,28 +48,28 @@
 		{
 			<tr>
 				<td>
-					@estacionamento.Id
+					@Html.DisplayFor(model => estacionamento.Id)
 				</td>
 				<td>
-					@estacionamento.IdentificacaoVeiculo
+					@Html.DisplayFor(model => estacionamento.IdentificacaoVeiculo)
 				</td>
 				<td>
-					@estacionamento.Proprietario
+					@Html.DisplayFor(model => estacionamento.Proprietario)
 				</td>
 				<td>
-					@estacionamento.Entrada
+					@Html.DisplayFor(model => estacionamento.Entrada)
 				</td>
 				<td>
-					@estacionamento.Saida
+					@Html.DisplayFor(model => estacionamento.Saida)
 				</td>
 				<td>
-					@estacionamento.HorasCobradas
+					@Html.DisplayFor(model => estacionamento.HorasCobradas)
 				</td>
 				<td>
-					@estacionamento.ValorCobrado
+					@Html.DisplayFor(model => estacionamento.ValorCobrado)
 				</td>
 				<td>
-					@estacionamento.Pago
+					@Html.DisplayFor(model => estacionamento.Pago)
 				</td>
 				<td>
 					<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a> |

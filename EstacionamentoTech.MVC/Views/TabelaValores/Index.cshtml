@@ -39,19 +39,19 @@
 		{
 			<tr>
 				<td>
-					@vigencia.Id
+					@Html.DisplayFor(model => vigencia.Id)
 				</td>
 				<td>
-					@vigencia.DataInicio
+					@Html.DisplayFor(model => vigencia.DataInicio)
 				</td>
 				<td>
-					@vigencia.DataFim
+					@Html.DisplayFor(model => vigencia.DataFim)
 				</td>
 				<td>
-					@vigencia.ValorHoraInicial
+					@Html.DisplayFor(model => vigencia.ValorHoraInicial)
 				</td>
 				<td>
-					@vigencia.ValorHoraAdicional
+					@Html.DisplayFor(model => vigencia.ValorHoraAdicional)
 				</td>
 				<td>
 					<a asp-action="EditarVigencia" asp-route-id="@vigencia.Id" class="btn btn-secondary">Editar</a> |
