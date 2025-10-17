@@ -1,14 +1,20 @@
 ﻿
+using EstacionamentoTech.Models.Atributos;
+
 namespace EstacionamentoTech.Models
 {
     public class HistoricoEstacionamentos : IEntityModel
     {
         public int Id { get; set; }
         public int Veiculo { get; set; }
+
+        [CampoDetalhe]
+        public string? IdentificacaoVeiculo { get; set; }
+
         public DateTime Entrada { get; set; }
         public DateTime Saida { get; set; }
         public decimal HorasCobradas { get; set; }
         public decimal ValorCobrado { get; set; }
-        public bool Pago { get; set; }
+        public bool Pago { get; set; } = false;
     }
 }
