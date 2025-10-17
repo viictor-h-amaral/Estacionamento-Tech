@@ -17,7 +17,7 @@ namespace EstacionamentoTech.Models.Tabelas
             { "Saida", typeof(DateTime) },
             { "HorasCobradas", typeof(decimal) },
             { "ValorCobrado", typeof(decimal) },
-            { "Pago", typeof(int) }
+            { "Pago", typeof(bool) }
         };
     }
 }

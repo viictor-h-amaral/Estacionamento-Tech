@@ -9,7 +9,7 @@ namespace EstacionamentoTech.Models
 
         public DateTime DataInicio { get; set; }
 
-        public DateTime DataFim { get; set; }
+        public DateTime? DataFim { get; set; }
 
         public decimal ValorHoraInicial { get; set; }
 

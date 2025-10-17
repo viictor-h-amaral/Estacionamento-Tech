@@ -10,11 +10,13 @@ namespace EstacionamentoTech.Models
 
         [CampoDetalhe]
         public string? IdentificacaoVeiculo { get; set; }
+        [CampoDetalhe]
+        public string? Proprietario { get; set; }
 
         public DateTime Entrada { get; set; }
-        public DateTime Saida { get; set; }
-        public decimal HorasCobradas { get; set; }
-        public decimal ValorCobrado { get; set; }
+        public DateTime? Saida { get; set; }
+        public decimal? HorasCobradas { get; set; }
+        public decimal? ValorCobrado { get; set; }
         public bool Pago { get; set; } = false;
     }
 }
