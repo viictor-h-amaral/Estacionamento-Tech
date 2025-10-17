@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EstacionamentoTech.Models.Veiculo>
+﻿@model IEnumerable<EstacionamentoTech.MVC.Models.VeiculoViewModel>
 
 @{
 	ViewData["Title"] = "Veículos";
@@ -21,7 +21,7 @@
 				@Html.DisplayNameFor(model => model.Nome)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Cliente)
+				@Html.DisplayNameFor(model => model.NomeCliente)
 			</th>
 			<th>
 				@Html.DisplayNameFor(model => model.Ano)
@@ -48,7 +48,7 @@
 					@veiculo.Nome
 				</td>
 				<td>
-					@veiculo.Cliente
+					@veiculo.NomeCliente
 				</td>
 				<td>
 					@veiculo.Ano
