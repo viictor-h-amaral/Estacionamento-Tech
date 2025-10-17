@@ -63,6 +63,29 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(cliente);
         }
 
+        [HttpGet]
+        public IActionResult DeletarCliente(int id)
+        {
+            var cliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {id}").FirstOrDefault();
+            if (cliente != null)
+            {
+                return View(cliente);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult DeletarCliente(Cliente cliente)
+        {
+            if (_contexto.TemDependencias(cliente, new TabelaVeiculo(), "Cliente"))
+            {
+                TempData["ErrorMessage"] = "Cliente está registrado como proprietário de um veículo!";
+                return View(cliente);
+            }
+            _contexto.Delete(new TabelaClientes(), cliente);
+            return RedirectToAction(nameof(Index));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
