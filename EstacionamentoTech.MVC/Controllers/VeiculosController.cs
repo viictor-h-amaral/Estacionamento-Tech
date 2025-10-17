@@ -34,8 +34,8 @@ namespace EstacionamentoTech.MVC.Controllers
                                 Ano = v.Ano,
                                 Tipo = v.Tipo,
                                 Placa = v.Placa,
-                                NomeCliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {v.Cliente}")
-                                                        .FirstOrDefault()?.Nome ?? "Cliente não encontrado"
+                                NomeCliente = _contexto.GetOneOrNull<Cliente>(new TabelaClientes(), $"id = {v.Cliente}")
+                                                        ?.Nome ?? " -- "
                             });
             
             return View(veiculos);
