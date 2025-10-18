@@ -3,6 +3,8 @@ using EstacionamentoTech.Data;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Validadores;
+using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstacionamentoTech.MVC.Controllers
@@ -11,11 +13,13 @@ namespace EstacionamentoTech.MVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Context _contexto;
+        private readonly IValidador<Cliente> _validador;
 
         public ClientesController(ILogger<HomeController> logger)
         {
             _logger = logger;
             _contexto = new Context();
+            _validador = new ClienteValidator(_contexto);
         }
 
         [HttpGet]
@@ -34,11 +38,28 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpPost]
         public IActionResult NovoCliente(Cliente cliente)
         {
-            if (ModelState.IsValid)
+            var mensagemValidacao = _validador.ValidarNoCriar(cliente);
+            bool dadosValidos = ModelState.IsValid;
+
+            if (dadosValidos && mensagemValidacao is null)
             {
                 _contexto.Insert(new TabelaClientes(), cliente);
                 return RedirectToAction(nameof(Index));
             }
+            else if (!dadosValidos)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    TempData["Mensagem"] += error.ErrorMessage + " ";
+                }
+                TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
+            }
+            else
+            {
+                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+            }
+
             return View(cliente);
         }
 
@@ -46,6 +67,7 @@ namespace EstacionamentoTech.MVC.Controllers
         public IActionResult EditarCliente(int id)
         {
             var cliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {id}").FirstOrDefault();
+
             if (cliente != null)
                 return View(cliente);
 
@@ -55,31 +77,53 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpPost]
         public IActionResult EditarCliente(Cliente cliente)
         {
-            if (ModelState.IsValid)
+            cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"Id = {cliente.Id}");
+            var mensagemValidacao = _validador.ValidarNoEditar(cliente);
+            bool dadosValidos = ModelState.IsValid;
+
+            if (dadosValidos && mensagemValidacao is null)
             {
                 _contexto.Update(new TabelaClientes(), cliente);
                 return RedirectToAction(nameof(Index));
             }
+            else if (!dadosValidos)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    TempData["Mensagem"] += error.ErrorMessage + " ";
+                }
+                TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
+            }
+            else
+            {
+                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+            }
+
             return View(cliente);
         }
 
         [HttpGet]
         public IActionResult DeletarCliente(int id)
         {
-            var cliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {id}").FirstOrDefault();
+            var cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {id}");
+
             if (cliente != null)
-            {
                 return View(cliente);
-            }
+
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         public IActionResult DeletarCliente(Cliente cliente)
         {
-            if (_contexto.TemDependencias(cliente, new TabelaVeiculo(), "Cliente"))
+            
+            if (_validador.ValidarNoDelete(cliente) is MensagemValidacao mensagemValidacao)
             {
-                TempData["ErrorMessage"] = "Cliente está registrado como proprietário de um veículo!";
+                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+
+                cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"Id = {cliente.Id}");
                 return View(cliente);
             }
             _contexto.Delete(new TabelaClientes(), cliente);

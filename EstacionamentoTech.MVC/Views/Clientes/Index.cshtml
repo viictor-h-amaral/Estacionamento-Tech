@@ -36,8 +36,8 @@
 					@Html.DisplayFor(model => cliente.Nome)
 				</td>
 				<td>
-					<a asp-action="EditarCliente" asp-route-id="@cliente.Id" class="btn btn-secondary">Editar</a> |
-					<a asp-action="DeletarCliente" asp-route-id="@cliente.Id" class="btn btn-danger">Deletar</a>
+					<a asp-action="EditarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-secondary">Editar</a> |
+					<a asp-action="DeletarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-danger">Deletar</a>
 				</td>
 			</tr>
 		}
