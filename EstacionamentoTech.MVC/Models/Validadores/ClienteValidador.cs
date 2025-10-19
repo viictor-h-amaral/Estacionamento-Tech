@@ -5,11 +5,11 @@ using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 
 namespace EstacionamentoTech.MVC.Models.Validadores
 {
-    internal class ClienteValidator : IValidador<Cliente>
+    public class ClienteValidador : IValidador<Cliente>
     {
         private readonly Context _contexto;
 
-        public ClienteValidator(Context context)
+        public ClienteValidador(Context context)
         {
             _contexto = context;
         }

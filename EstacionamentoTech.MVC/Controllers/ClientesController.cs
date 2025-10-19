@@ -19,7 +19,7 @@ namespace EstacionamentoTech.MVC.Controllers
         {
             _logger = logger;
             _contexto = new Context();
-            _validador = new ClienteValidator(_contexto);
+            _validador = new ClienteValidador(_contexto);
         }
 
         [HttpGet]
@@ -66,7 +66,7 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpGet]
         public IActionResult EditarCliente(int id)
         {
-            var cliente = _contexto.GetMany<Cliente>(new TabelaClientes(), $"id = {id}").FirstOrDefault();
+            var cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {id}");
 
             if (cliente != null)
                 return View(cliente);

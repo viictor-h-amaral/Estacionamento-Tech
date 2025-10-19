@@ -2,7 +2,7 @@
 
 namespace EstacionamentoTech.MVC.Models.Validadores.Estrutura
 {
-    internal class MensagemValidacao
+    public class MensagemValidacao
     {
         public string Mensagem { get; set; }
         public TiposValidacoes Tipo { get; set; }
