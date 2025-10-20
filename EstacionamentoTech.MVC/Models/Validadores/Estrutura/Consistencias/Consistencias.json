@@ -3,5 +3,10 @@
         "Codigo": "CLI_001",
         "Mensagem": "Cliente está registrado como proprietário de um veículo!",
         "Tipo": 4
+    },
+    {
+        "Codigo": "VEI_001",
+        "Mensagem": "Veículo está registrado em algum histórico de estacionamento!",
+        "Tipo": 4
     }
 ]
