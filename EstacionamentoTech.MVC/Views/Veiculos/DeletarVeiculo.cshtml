@@ -12,7 +12,7 @@
 	Esta operação é irreversível.
 </h3>
 
-@if (TempData["Mensagem"] is string mensagem)
+@if (TempData["Mensagens"] is List<string> mensagens)
 {
 	string tipoMensagem = TempData["Tipo"].ToString();
 
@@ -20,17 +20,26 @@
 	{
 		case "4":
 			<div class="alert alert-danger" role="alert">
-				@mensagem
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
 			</div>
 			break;
 		case "2":
 			<div class="alert alert-warning" role="alert">
-				@mensagem
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
 			</div>
 			break;
 		case "1":
 			<div class="alert alert-info" role="alert">
-				@mensagem
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
 			</div>
 			break;
 	}

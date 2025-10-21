@@ -41,12 +41,7 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpGet]
         public IActionResult NovoVeiculo()
         {
-            List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Nome
-                    }).ToList();
+            var clientes = BuscarClientes();
 
             ViewBag.Clientes = clientes;
             return View();
@@ -65,30 +60,25 @@ namespace EstacionamentoTech.MVC.Controllers
             }
             else if (!dadosValidos)
             {
-                string mensagem = string.Empty;
+                List<string> mensagens = [];
                 foreach (var entradaInvalida in ModelState.Where(m =>
                     m.Value?.ValidationState
                     == ModelValidationState.Invalid))
                 {
                     string nomeCampo = entradaInvalida.Key;
-                    mensagem += $"O campo {nomeCampo} é obrigatório! \n";
+                    mensagens.Add($"O campo {nomeCampo} é obrigatório!");
                 }
-                TempData["Mensagem"] = mensagem;
+                TempData["Mensagens"] = mensagens;
                 TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
             }
             else
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
 
-            List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Nome
-                    }).ToList();
+            var clientes = BuscarClientes();
 
             ViewBag.Clientes = clientes;
             return View(veiculo);
@@ -100,13 +90,7 @@ namespace EstacionamentoTech.MVC.Controllers
             var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {id}");
             if (veiculo != null)
             {
-                List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Nome,
-                        Selected = c.Id == veiculo.Cliente
-                    }).ToList();
+                var clientes = BuscarClientes();
 
                 ViewBag.Clientes = clientes;
                 return View(veiculo);
@@ -129,35 +113,42 @@ namespace EstacionamentoTech.MVC.Controllers
             }
             else if (!dadosValidos)
             {
-                string mensagem = string.Empty;
+                List<string> mensagens = [];
                 foreach (var entradaInvalida in ModelState.Where(m => 
                     m.Value?.ValidationState
                     == ModelValidationState.Invalid))
                 {
                     string nomeCampo = entradaInvalida.Key;
-                    mensagem += $"O campo {nomeCampo} é obrigatório! \n";
+                    mensagens.Add($"O campo {nomeCampo} é obrigatório!");
                 }
-                TempData["Mensagem"] = mensagem;
+                TempData["Mensagens"] = mensagens;
                 TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
             }
             else
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
-            List<SelectListItem> clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Nome
-                    }).ToList();
-
+            var clientes = BuscarClientes();
+            
             ViewBag.Clientes = clientes;
             return View(veiculo);
         }
 
-        [HttpGet]
+        private IEnumerable<SelectListItem> BuscarClientes()
+        {
+            var clientes = _contexto.GetMany<Cliente>(new TabelaClientes())
+                   .Select(c => new SelectListItem
+                   {
+                       Value = c.Id.ToString(),
+                       Text = c.Nome
+                   });
+
+            return clientes;
+        }
+
+            [HttpGet]
         public IActionResult DeletarVeiculo(int id)
         {
             var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {id}");
@@ -172,10 +163,9 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpPost]
         public IActionResult DeletarVeiculo(Veiculo veiculo)
         {
-
             if (_validador.ValidarNoDelete(veiculo) is MensagemValidacao mensagemValidacao)
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
 
                 veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"Id = {veiculo.Id}");

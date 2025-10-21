@@ -6,6 +6,7 @@ using EstacionamentoTech.MVC.Models;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace EstacionamentoTech.MVC.Controllers
 {
@@ -48,15 +49,20 @@ namespace EstacionamentoTech.MVC.Controllers
             }
             else if (!dadosValidos)
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                List<string> mensagem = [];
+                foreach (var entradaInvalida in ModelState.Where(m =>
+                    m.Value?.ValidationState
+                    == ModelValidationState.Invalid))
                 {
-                    TempData["Mensagem"] += error.ErrorMessage + " ";
+                    string nomeCampo = entradaInvalida.Key;
+                    mensagem.Add($"O campo {nomeCampo} é obrigatório!");
                 }
+                TempData["Mensagens"] = mensagem;
                 TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
             }
             else
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
@@ -88,15 +94,20 @@ namespace EstacionamentoTech.MVC.Controllers
             }
             else if (!dadosValidos)
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                List<string> mensagens = [];
+                foreach (var entradaInvalida in ModelState.Where(m =>
+                    m.Value?.ValidationState
+                    == ModelValidationState.Invalid))
                 {
-                    TempData["Mensagem"] += error.ErrorMessage + " ";
+                    string nomeCampo = entradaInvalida.Key;
+                    mensagens.Add($"O campo {nomeCampo} é obrigatório!");
                 }
+                TempData["Mensagens"] = mensagens;
                 TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
             }
             else
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
@@ -120,7 +131,7 @@ namespace EstacionamentoTech.MVC.Controllers
             
             if (_validador.ValidarNoDelete(cliente) is MensagemValidacao mensagemValidacao)
             {
-                TempData["Mensagem"] = mensagemValidacao.Mensagem;
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
 
                 cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"Id = {cliente.Id}");
