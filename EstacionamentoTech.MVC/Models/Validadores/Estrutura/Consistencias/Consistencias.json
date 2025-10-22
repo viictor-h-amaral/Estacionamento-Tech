@@ -8,5 +8,15 @@
         "Codigo": "VEI_001",
         "Mensagem": "Veículo está registrado em algum histórico de estacionamento!",
         "Tipo": 4
+    },
+    {
+        "Codigo": "VIG_001",
+        "Mensagem": "Data de Início e Fim da vigência estão inválidas!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "VIG_002",
+        "Mensagem": "Já há alguma vigência cobrindo este período!",
+        "Tipo": 4
     }
 ]

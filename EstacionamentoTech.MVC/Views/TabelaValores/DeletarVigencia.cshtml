@@ -1,0 +1,97 @@
+﻿@model EstacionamentoTech.Models.TabelaValores
+
+@{
+	ViewData["Title"] = "Deletar Vigência";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+<h3 style="color:red;">
+	Esta operação é irreversível.
+</h3>
+
+@if (TempData["Mensagens"] is List<string> mensagens)
+{
+	string tipoMensagem = TempData["Tipo"].ToString();
+
+	switch (tipoMensagem)
+	{
+		case "4":
+			<div class="alert alert-danger" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "2":
+			<div class="alert alert-warning" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "1":
+			<div class="alert alert-info" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+	}
+}
+
+<hr>
+
+
+
+<div>
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.DataInicio)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.DataInicio)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.DataFim)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.DataFim)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ValorHoraInicial)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.ValorHoraInicial)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ValorHoraAdicional)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.ValorHoraAdicional)
+		</dt>
+	</dl>
+</div>
+
+<hr />
+
+<form asp-action="DeletarVigencia">
+	<input type="submit" value="Deletar" class="btn btn-danger"/>
+</form>
+
+<hr />
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

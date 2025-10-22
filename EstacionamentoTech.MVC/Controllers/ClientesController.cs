@@ -74,10 +74,7 @@ namespace EstacionamentoTech.MVC.Controllers
         {
             var cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {id}");
 
-            if (cliente != null)
-                return View(cliente);
-
-            return RedirectToAction(nameof(Index));
+            return View(cliente);
         }
 
         [HttpPost]
@@ -119,10 +116,7 @@ namespace EstacionamentoTech.MVC.Controllers
         {
             var cliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {id}");
 
-            if (cliente != null)
-                return View(cliente);
-
-            return RedirectToAction(nameof(Index));
+            return View(cliente);
         }
 
         [HttpPost]

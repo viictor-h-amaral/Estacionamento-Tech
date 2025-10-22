@@ -1,6 +1,7 @@
 ﻿using EstacionamentoTech.Data.Utilidades;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
+using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Asn1;
 
@@ -125,6 +126,30 @@ namespace EstacionamentoTech.Data
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public bool Exists(ITabela tabela, CriterioSelecao criterio)
+        {
+            string strComando = $@"SELECT 1 
+                                    FROM {dataBaseName}.{tabela.NomeTabela} 
+                                    WHERE {criterio.ClausulaWhere}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+                
+                foreach (var parametro in criterio.Parametros)
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
+                return comando.ExecuteReader().HasRows;
             }
             finally
             {

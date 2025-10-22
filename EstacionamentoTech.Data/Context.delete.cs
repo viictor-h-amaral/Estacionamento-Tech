@@ -33,20 +33,20 @@ namespace EstacionamentoTech.Data
 
         public bool TemDependencias<T>(T registro, ITabela tabelaDependencia, string colunaFk) where T : class, IEntityModel
         {
-                string strComando = $@"SELECT 1 
-                                        FROM {dataBaseName}.{tabelaDependencia.NomeTabela} 
-                                        WHERE {colunaFk} = {registro.Id}";
+            string strComando = $@"SELECT 1 
+                                    FROM {dataBaseName}.{tabelaDependencia.NomeTabela} 
+                                    WHERE {colunaFk} = {registro.Id}";
 
-                try
-                {
-                    _connection.Open();
-                    var comando = new MySqlCommand(strComando, _connection);
-                    return comando.ExecuteReader().HasRows;
-                }
-                finally
-                {
-                    _connection.Close();
-                }
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+                return comando.ExecuteReader().HasRows;
+            }
+            finally
+            {
+                _connection.Close();
             }
         }
+    }
 }

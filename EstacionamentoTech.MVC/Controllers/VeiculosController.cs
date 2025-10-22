@@ -88,15 +88,10 @@ namespace EstacionamentoTech.MVC.Controllers
         public IActionResult EditarVeiculo(int id)
         {
             var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {id}");
-            if (veiculo != null)
-            {
-                var clientes = BuscarClientes();
+            var clientes = BuscarClientes();
 
-                ViewBag.Clientes = clientes;
-                return View(veiculo);
-            }
-
-            return RedirectToAction(nameof(Index));
+            ViewBag.Clientes = clientes;
+            return View(veiculo);
         }
 
         [HttpPost]
@@ -148,16 +143,13 @@ namespace EstacionamentoTech.MVC.Controllers
             return clientes;
         }
 
-            [HttpGet]
+        [HttpGet]
         public IActionResult DeletarVeiculo(int id)
         {
             var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {id}");
             veiculo.NomeCliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}").Nome;
 
-            if (veiculo != null)
-                return View(veiculo);
-
-            return RedirectToAction(nameof(Index));
+            return View(veiculo);
         }
 
         [HttpPost]
