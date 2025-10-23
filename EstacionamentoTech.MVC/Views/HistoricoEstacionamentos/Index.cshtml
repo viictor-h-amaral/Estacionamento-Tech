@@ -72,8 +72,12 @@
 					@Html.DisplayFor(model => estacionamento.Pago)
 				</td>
 				<td>
-					<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a> |
-					<a asp-action="Deletar" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+					@if (!estacionamento.Pago)
+					{
+						<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a>
+						<a asp-action="DeletarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+					}
+					
 				</td>
 			</tr>
 		}

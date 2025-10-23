@@ -21,10 +21,10 @@ namespace EstacionamentoTech.Data.Utilidades
         private IDictionary<string, object?> _parametros;
         public IDictionary<string, object?> Parametros { get; set; }
 
-        public CriterioSelecao(string clausulaWhere, IDictionary<string, object>? parametros = null) 
+        public CriterioSelecao(string clausulaWhere, IDictionary<string, object?> parametros) 
         {
             ClausulaWhere = clausulaWhere;
-            _parametros = parametros;
+            Parametros = parametros;
         }
 
         public CriterioSelecao(string clausulaWhere)

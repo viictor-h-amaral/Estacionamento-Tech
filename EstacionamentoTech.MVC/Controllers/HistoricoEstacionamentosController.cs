@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using EstacionamentoTech.Data;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Validadores;
+using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EstacionamentoTech.MVC.Controllers
@@ -12,11 +16,13 @@ namespace EstacionamentoTech.MVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Context _contexto;
+        private readonly IValidador<HistoricoEstacionamentos> _validador;
 
         public HistoricoEstacionamentosController(ILogger<HomeController> logger)
         {
             _logger = logger;
             _contexto = new Context();
+            _validador = new HistoricoEstacionamentosValidador(_contexto);
         }
 
         [HttpGet]
@@ -26,7 +32,7 @@ namespace EstacionamentoTech.MVC.Controllers
             foreach (var historico in historicos)
             {
                 var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {historico.Veiculo}");
-                var nomeProprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}")?.Nome ?? " -- ";
+                var nomeProprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}").Nome;
 
                 historico.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
                 historico.Proprietario = nomeProprietario;
@@ -35,60 +41,129 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(historicos);
         }
 
-        [HttpGet]
-        public IActionResult NovoEstacionamento()
+        private IEnumerable<SelectListItem> BuscarVeiculos()
         {
-            List<SelectListItem> veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo())
+            var veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo())
                     .Select(v => new SelectListItem
                     {
                         Value = v.Id.ToString(),
-                        Text = v.Placa +"/"+ v.Nome +", "+ _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {v.Cliente}").Nome
-                    }).ToList();
+                        Text = v.Placa + "/" + v.Nome + ", " + _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {v.Cliente}").Nome
+                    });
 
-            ViewBag.Veiculos = veiculos;
+            return veiculos;
+        }
+
+        [HttpGet]
+        public IActionResult NovoEstacionamento()
+        {
+            ViewBag.Veiculos = BuscarVeiculos();
             return View();
         }
 
         [HttpPost]
         public IActionResult NovoEstacionamento(HistoricoEstacionamentos estacionamento)
         {
-            if (ModelState.IsValid)
+            var mensagemValidacao = _validador.ValidarNoCriar(estacionamento);
+            bool dadosValidos = ModelState.IsValid;
+
+            if (dadosValidos && mensagemValidacao is null)
             {
                 _contexto.Insert(new TabelaHistoricoEstacionamentos(), estacionamento);
                 return RedirectToAction(nameof(Index));
             }
+            else if (!dadosValidos)
+            {
+                List<string> mensagens = [];
+                foreach (var entradaInvalida in ModelState.Where(m =>
+                    m.Value?.ValidationState
+                    == ModelValidationState.Invalid))
+                {
+                    string nomeCampo = entradaInvalida.Key;
+                    mensagens.Add($"O campo {nomeCampo} é obrigatório!");
+                }
+                TempData["Mensagens"] = mensagens;
+                TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
+            }
+            else
+            {
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+            }
+
+            ViewBag.Veiculos = BuscarVeiculos();
             return View(estacionamento);
         }
 
         [HttpGet]
         public IActionResult EditarEstacionamento(int id)
         {
-            var cliente = _contexto.GetMany<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}").FirstOrDefault();
-            if (cliente != null)
-            {
-                List<SelectListItem> veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo())
-                    .Select(v => new SelectListItem
-                    {
-                        Value = v.Id.ToString(),
-                        Text = v.Placa + "/" + v.Nome + ", " + _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {v.Cliente}").Nome
-                    }).ToList();
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
 
-                ViewBag.Veiculos = veiculos;
-                return View(cliente);
-            }
-
-            return RedirectToAction(nameof(Index));
+            ViewBag.Veiculos = BuscarVeiculos();
+            return View(estacionamento);
         }
 
         [HttpPost]
         public IActionResult EditarEstacionamento(HistoricoEstacionamentos estacionamento)
         {
-            if (ModelState.IsValid)
+            estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"Id = {estacionamento.Id}");
+
+            var mensagemValidacao = _validador.ValidarNoEditar(estacionamento);
+            bool dadosValidos = ModelState.IsValid;
+
+            if (dadosValidos && mensagemValidacao is null)
             {
                 _contexto.Update(new TabelaHistoricoEstacionamentos(), estacionamento);
                 return RedirectToAction(nameof(Index));
             }
+            else if (!dadosValidos)
+            {
+                List<string> mensagens = [];
+                foreach (var entradaInvalida in ModelState.Where(m =>
+                    m.Value?.ValidationState
+                    == ModelValidationState.Invalid))
+                {
+                    string nomeCampo = entradaInvalida.Key;
+                    mensagens.Add($"O campo {nomeCampo} é obrigatório!");
+                }
+                TempData["Mensagens"] = mensagens;
+                TempData["Tipo"] = (int)TiposValidacoes.Inconsistencia;
+            }
+            else
+            {
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+            }
+
+            ViewBag.Veiculos = BuscarVeiculos();
             return View(estacionamento);
+        }
+
+        [HttpGet]
+        public IActionResult DeletarVeiculo(int id)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+            var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {estacionamento.Veiculo}");
+
+            estacionamento.Proprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), @$"Id = {veiculo.Cliente}").Nome;
+            estacionamento.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
+
+            return View(estacionamento);
+        }
+
+        [HttpPost]
+        public IActionResult DeletarEstacionamento(HistoricoEstacionamentos estacionamento)
+        {
+            if (_validador.ValidarNoDelete(estacionamento) is MensagemValidacao mensagemValidacao)
+            {
+                TempData["Mensagens"] = new List<string>() { mensagemValidacao.Mensagem };
+                TempData["Tipo"] = (int)mensagemValidacao.Tipo;
+
+                estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"Id = {estacionamento.Id}");
+                return View(estacionamento);
+            }
+            _contexto.Delete(new TabelaHistoricoEstacionamentos(), estacionamento);
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
