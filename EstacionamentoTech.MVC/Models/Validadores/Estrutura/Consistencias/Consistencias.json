@@ -20,6 +20,11 @@
         "Tipo": 4
     },
     {
+        "Codigo": "VIG_003",
+        "Mensagem": "Não é possível a edição desta vigência pois há estacionamentos relacionados a ela!",
+        "Tipo": 4
+    },
+    {
         "Codigo": "EST_001",
         "Mensagem": "Data de início do estacionamento não pode ser posterior à data corrente!",
         "Tipo": 4

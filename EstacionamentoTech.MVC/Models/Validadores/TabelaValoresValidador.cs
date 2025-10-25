@@ -48,6 +48,11 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 
         public MensagemValidacao? ValidarNoEditar(TabelaValores vigencia)
         {
+            bool possuiEstacionamentosRelacionados = _contexto.TemDependencias<TabelaValores>(vigencia, new TabelaHistoricoEstacionamentos(), "Vigencia");
+
+            if (possuiEstacionamentosRelacionados)
+                return new MensagemValidacao("VIG_003");
+
             if (ValidarNoSalvar(vigencia) is MensagemValidacao mensagem)
                 return mensagem;
 

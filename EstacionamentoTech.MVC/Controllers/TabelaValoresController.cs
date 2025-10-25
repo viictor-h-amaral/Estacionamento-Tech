@@ -75,19 +75,27 @@ namespace EstacionamentoTech.MVC.Controllers
         {
             var vigencia = _contexto.GetOne<TabelaValores>(new TabelaTabelaValores(), $"id = {id}");
 
+            bool possuiEstacionamentosRelacionados = _contexto.TemDependencias<TabelaValores>(vigencia, new TabelaHistoricoEstacionamentos(), "Vigencia");
+
+            if (possuiEstacionamentosRelacionados)
+            {
+                var consistencia = new MensagemValidacao("VIG_003");
+                TempData["Mensagens"] = new List<string> { consistencia.Mensagem };
+                TempData["Tipo"] = (int)consistencia.Tipo;
+            }
+
             return View(vigencia);
         }
 
         [HttpPost]
         public IActionResult EditarVigencia(TabelaValores vigencia)
         {
-            
             var mensagemValidacao = _validador.ValidarNoEditar(vigencia);
             bool dadosValidos = ModelState.IsValid;
 
             if (dadosValidos && mensagemValidacao is null)
             {
-                _contexto.Insert(new TabelaTabelaValores(), vigencia);
+                _contexto.Update(new TabelaTabelaValores(), vigencia);
                 return RedirectToAction(nameof(Index));
             }
             else if (!dadosValidos)
