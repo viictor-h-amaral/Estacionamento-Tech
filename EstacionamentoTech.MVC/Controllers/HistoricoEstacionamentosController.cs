@@ -179,16 +179,16 @@ namespace EstacionamentoTech.MVC.Controllers
         public IActionResult FecharEstacionamento(HistoricoEstacionamentos estacionamento)
         {
             var mensagemValidacao = _validador.ValidarNoFechar(estacionamento);
+            var estacionamentoExtensor = new HistoricoEstacionamentosExtensor(_contexto, estacionamento);
             bool dadosValidos = ModelState.IsValid;
 
             if (dadosValidos && mensagemValidacao is null)
             {
-                estacionamento.HorasCobradas = CalcularHorasCobradas(estacionamento.Entrada, estacionamento.Saida.Value);
-
-                estacionamento.ValorCobrado = CalcularValorCobrado(estacionamento);
+                estacionamentoExtensor.CalcularHorasCobradas();
+                estacionamentoExtensor.DefinirVigencia();
+                estacionamentoExtensor.CalcularValorCobrado();
 
                 _contexto.Update(new TabelaHistoricoEstacionamentos(), estacionamento);
-                return RedirectToAction(nameof(Index));
             }
             else if (!dadosValidos)
             {
@@ -213,52 +213,6 @@ namespace EstacionamentoTech.MVC.Controllers
 
             ViewBag.Veiculos = BuscarVeiculos();
             return View(estacionamento);
-        }
-
-        private decimal CalcularHorasCobradas(DateTime entrada, DateTime saida)
-        {
-            TimeSpan duracao = saida - entrada;
-            decimal horasCobradas;
-
-            if (duracao.TotalMinutes <= 30)
-                horasCobradas = 0.5m;
-
-            else if (duracao.Minutes <= 10)
-                horasCobradas = Math.Floor((decimal)duracao.TotalHours);
-
-            else
-                horasCobradas = Math.Ceiling((decimal)duracao.TotalHours);
-
-            return horasCobradas;
-        }
-
-        private decimal CalcularValorCobrado(HistoricoEstacionamentos estacionamento)
-        {
-            var criterioSelecaoValores = new CriterioSelecao(
-                                        @" ( DATAINICIO <= @SAIDA )
-                                           AND 
-                                           ( @ENTRADA <= DATAFIM OR DATAFIM IS NULL) ",
-                                        new Dictionary<string, object?>()
-                                        {
-                                            { "@ENTRADA", estacionamento.Entrada },
-                                            { "@SAIDA", estacionamento.Saida }
-                                        });
-
-            var valores = _contexto.GetOne<TabelaValores>(new TabelaTabelaValores(),
-                                                        criterioSelecaoValores);
-
-            decimal valorHoraInicial = valores.ValorHoraInicial;
-            decimal valorHoraAdicional = valores.ValorHoraAdicional;
-            decimal horasCobradas = estacionamento.HorasCobradas.Value;
-            decimal aSerPago;
-
-            if (horasCobradas < 1)
-                aSerPago = valorHoraInicial * horasCobradas;
-
-            else
-                aSerPago = valorHoraInicial + (horasCobradas - 1) * valorHoraAdicional;
-
-            return aSerPago;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

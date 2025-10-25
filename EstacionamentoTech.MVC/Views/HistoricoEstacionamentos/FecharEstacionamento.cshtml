@@ -74,6 +74,13 @@
 				<label asp-for="Pago" class="control-label"></label>
 				<input type="checkbox" asp-for="Pago" class="form-check-input" disabled />
 			</div>
+			<div class="form-group">
+				<label class="control-label">Log do Cálculo</label>
+				<textarea class="form-control" 
+					rows="6" readonly 
+					style="resize: vertical; background-color: #f8f9fa; font-family: monospace; font-size: 0.9em;"
+					>@Model.LogCalculo</textarea>
+			</div>
 			<br />
 			<div class="form-group">
 				<input type="submit" value="Salvar" class="btn btn-primary"/>

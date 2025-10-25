@@ -13,11 +13,13 @@ namespace EstacionamentoTech.Models.Tabelas
         {
             { "Id", typeof(int) },
             { "Veiculo", typeof(int) },
+            { "Vigencia", typeof(int) },
             { "Entrada", typeof(DateTime) },
             { "Saida", typeof(DateTime) },
             { "HorasCobradas", typeof(decimal) },
             { "ValorCobrado", typeof(decimal) },
-            { "Pago", typeof(bool) }
+            { "Pago", typeof(bool) },
+            { "LogCalculo", typeof(string) }
         };
     }
 }

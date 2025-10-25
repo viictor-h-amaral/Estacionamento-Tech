@@ -7,6 +7,7 @@ namespace EstacionamentoTech.Models
     {
         public int Id { get; set; }
         public int Veiculo { get; set; }
+        public int? Vigencia { get; set; }
 
         [CampoDetalhe]
         public string? IdentificacaoVeiculo { get; set; }
@@ -18,5 +19,6 @@ namespace EstacionamentoTech.Models
         public decimal? HorasCobradas { get; set; }
         public decimal? ValorCobrado { get; set; }
         public bool Pago { get; set; } = false;
+        public string? LogCalculo {  get; set; }
     }
 }
