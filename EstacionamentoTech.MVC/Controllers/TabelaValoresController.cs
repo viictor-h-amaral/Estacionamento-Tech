@@ -81,7 +81,7 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpPost]
         public IActionResult EditarVigencia(TabelaValores vigencia)
         {
-            vigencia = _contexto.GetOne<TabelaValores>(new TabelaTabelaValores(), $"Id = {vigencia.Id}");
+            
             var mensagemValidacao = _validador.ValidarNoEditar(vigencia);
             bool dadosValidos = ModelState.IsValid;
 
@@ -109,6 +109,7 @@ namespace EstacionamentoTech.MVC.Controllers
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
+            vigencia = _contexto.GetOne<TabelaValores>(new TabelaTabelaValores(), $"Id = {vigencia.Id}");
             return View(vigencia);
         }
 

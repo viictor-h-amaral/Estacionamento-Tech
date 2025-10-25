@@ -97,7 +97,6 @@ namespace EstacionamentoTech.MVC.Controllers
         [HttpPost]
         public IActionResult EditarVeiculo(Veiculo veiculo)
         {
-            veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"Id = {veiculo.Id}");
             var mensagemValidacao = _validador.ValidarNoEditar(veiculo);
             bool dadosValidos = ModelState.IsValid;
 
@@ -125,6 +124,7 @@ namespace EstacionamentoTech.MVC.Controllers
                 TempData["Tipo"] = (int)mensagemValidacao.Tipo;
             }
 
+            veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"Id = {veiculo.Id}");
             var clientes = BuscarClientes();
             
             ViewBag.Clientes = clientes;
