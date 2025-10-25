@@ -133,6 +133,51 @@ namespace EstacionamentoTech.Data
             }
         }
 
+        public T GetOne<T>(ITabela tabela, CriterioSelecao criterio) where T : class, IEntityModel
+        {
+            string strComando = $@"SELECT * 
+                                FROM {dataBaseName}.{tabela.NomeTabela} A
+                                WHERE {criterio.ClausulaWhere}
+                                LIMIT 1";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                foreach (var parametro in criterio.Parametros)
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
+                using (MySqlDataReader leitorDados = comando.ExecuteReader())
+                {
+                    if (leitorDados.Read())
+                    {
+                        T entidade = Activator.CreateInstance<T>();
+                        foreach (var campo in tabela.CamposTabela)
+                        {
+                            var valor = leitorDados[campo.Key];
+                            if (valor != DBNull.Value)
+                            {
+                                entidade.GetType().GetProperty(campo.Key)?.SetValue(entidade, Convert.ChangeType(valor, campo.Value));
+                            }
+                        }
+                        return entidade;
+                    }
+                    throw new Exception("Exceção não esperada! Não encontrado objeto certo no banco de dados");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
         public bool Exists(ITabela tabela, CriterioSelecao criterio)
         {
             string strComando = $@"SELECT 1 

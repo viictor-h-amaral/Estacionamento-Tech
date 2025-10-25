@@ -33,5 +33,15 @@
         "Codigo": "EST_003",
         "Mensagem": "Não é possível apagar históricos de estacionamentos já pagos!",
         "Tipo": 4
+    },
+    {
+        "Codigo": "EST_004",
+        "Mensagem": "Para finalizar um estacionamento, deve-se preencher a data de saída do veículo!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_005",
+        "Mensagem": "Não há abrangências parametrizadas para o período de estacionamento do veículo!",
+        "Tipo": 4
     }
 ]

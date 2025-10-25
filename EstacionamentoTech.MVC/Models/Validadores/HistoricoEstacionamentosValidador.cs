@@ -45,7 +45,8 @@ namespace EstacionamentoTech.MVC.Models.Validadores
                 return new MensagemValidacao("EST_001");
 
             var criterio = new CriterioSelecao(
-                                    @" VEICULO = @VEICULO 
+                                    @" ID <> @ID
+                                       AND VEICULO = @VEICULO 
                                        AND 
                                        (
                                             (SAIDA >= @ENTRADA OR SAIDA IS NULL) 
@@ -56,12 +57,40 @@ namespace EstacionamentoTech.MVC.Models.Validadores
                                     {
                                         { "@VEICULO", estacionamento.Veiculo },
                                         { "@ENTRADA", estacionamento.Entrada },
-                                        { "@SAIDA", estacionamento.Saida } 
+                                        { "@SAIDA", estacionamento.Saida },
+                                        { "@ID", estacionamento.Id }
                                     }
                                  );
 
             if (_contexto.Exists(new TabelaHistoricoEstacionamentos(), criterio))
                 return new MensagemValidacao("EST_002");
+
+            return null;
+        }
+
+        public MensagemValidacao? ValidarNoFechar(HistoricoEstacionamentos estacionamento)
+        {
+            if (estacionamento.Saida is null)
+                return new MensagemValidacao("EST_004");
+
+            var criterioSelecaoValores = new CriterioSelecao(
+                                        @" ( DATAINICIO <= @SAIDA )
+                                           AND 
+                                           ( @ENTRADA <= DATAFIM OR DATAFIM IS NULL) ",
+                                        new Dictionary<string, object?>()
+                                        {
+                                            { "@ENTRADA", estacionamento.Entrada },
+                                            { "@SAIDA", estacionamento.Saida }
+                                        });
+
+            var existeAbrangencia = _contexto.Exists(new TabelaTabelaValores(),
+                                                        criterioSelecaoValores);
+
+            if (!existeAbrangencia)
+                return new MensagemValidacao("EST_005");
+
+            if (ValidarNoEditar(estacionamento) is MensagemValidacao mensagem)
+                return mensagem;
 
             return null;
         }
