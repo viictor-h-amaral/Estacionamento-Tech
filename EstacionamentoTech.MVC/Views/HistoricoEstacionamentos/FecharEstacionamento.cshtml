@@ -83,7 +83,10 @@
 			</div>
 			<br />
 			<div class="form-group">
-				<input type="submit" value="Salvar" class="btn btn-primary"/>
+				@if (!Model.ValorCobrado.HasValue)
+				{
+					<input type="submit" value="Calcular" class="btn btn-primary" />
+				}
 			</div>
 		</form>
 	</div>
