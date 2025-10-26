@@ -1,5 +1,6 @@
 ﻿
 using EstacionamentoTech.Models.Atributos;
+using EstacionamentoTech.Models.Enums;
 
 namespace EstacionamentoTech.Models
 {
@@ -20,6 +21,7 @@ namespace EstacionamentoTech.Models
         public decimal? ValorCobrado { get; set; }
         public bool Pago { get; set; } = false;
         public int? FormaPagamento {  get; set; }
+        public FormasPagamento? FormaPagamentoEnum {  get; set; }
         public string? LogCalculo {  get; set; }
     }
 }

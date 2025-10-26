@@ -2,6 +2,7 @@
 using EstacionamentoTech.Data;
 using EstacionamentoTech.Data.Utilidades;
 using EstacionamentoTech.Models;
+using EstacionamentoTech.Models.Enums;
 using EstacionamentoTech.Models.Tabelas;
 
 namespace EstacionamentoTech.MVC.Models
@@ -121,6 +122,19 @@ namespace EstacionamentoTech.MVC.Models
 
             Estacionamento.ValorCobrado = aSerPago;
             Estacionamento.LogCalculo += $"\n" + logCalculo.ToString();
+        }
+
+        public void CarregarDadosProprietarioVeiculo()
+        {
+            var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {Estacionamento.Veiculo}");
+
+            Estacionamento.Proprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), @$"Id = {veiculo.Cliente}").Nome;
+            Estacionamento.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
+        }
+
+        public void CarregarFormaPagamentoEnum()
+        {
+            Estacionamento.FormaPagamentoEnum = (FormasPagamento?)Estacionamento.FormaPagamento;
         }
     }
 }
