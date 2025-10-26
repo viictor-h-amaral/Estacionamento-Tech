@@ -85,7 +85,12 @@
 
 					@if (estacionamento.Saida is null)
 					{
-						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-dark">Fechar</a>
+						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-danger">Fechar</a>
+					}
+
+					@if (estacionamento.ValorCobrado.HasValue && !estacionamento.Pago)
+					{
+						<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Pagar</a>
 					}
 					
 				</td>

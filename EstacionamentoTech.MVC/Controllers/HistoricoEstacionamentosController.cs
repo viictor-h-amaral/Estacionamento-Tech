@@ -215,6 +215,49 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(estacionamento);
         }
 
+        [HttpGet]
+        public IActionResult PagarEstacionamento(int id)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+
+            ViewBag.FormasDePagamento = new List<SelectListItem>() 
+            {
+                new SelectListItem
+                {
+                    Value = "1",
+                    Text = "Dinheiro"
+                },
+                new SelectListItem
+                {
+                    Value = "2",
+                    Text = "PIX"
+                },
+                new SelectListItem
+                {
+                    Value = "3",
+                    Text = "Crédito"
+                },
+                new SelectListItem
+                {
+                    Value = "4",
+                    Text = "Débito"
+                }
+            };
+            return View(estacionamento);
+        }
+
+        [HttpPost]
+        public IActionResult PagarEstacionamento(int id, string formaDePagamento)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+
+            estacionamento.Pago = true;
+            _contexto.Update(new TabelaHistoricoEstacionamentos(), estacionamento);
+            //gerar arquivo de compra
+            ;
+            return RedirectToAction(nameof(Index));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
