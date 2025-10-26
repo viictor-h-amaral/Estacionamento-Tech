@@ -76,21 +76,20 @@
 					@if (estacionamento.Saida is null)
 					{
 						<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a>
+						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Fechar</a>
 					}
 
 					@if (!estacionamento.Pago)
 					{
+						if (estacionamento.ValorCobrado.HasValue)
+						{
+							<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Pagar</a>
+						}
 						<a asp-action="DeletarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
 					}
-
-					@if (estacionamento.Saida is null)
+					else
 					{
-						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-danger">Fechar</a>
-					}
-
-					@if (estacionamento.ValorCobrado.HasValue && !estacionamento.Pago)
-					{
-						<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Pagar</a>
+						<a asp-action="ArquivoCompra" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Arquivo de compra</a>
 					}
 					
 				</td>

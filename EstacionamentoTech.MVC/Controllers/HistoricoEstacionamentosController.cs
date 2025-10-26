@@ -6,6 +6,7 @@ using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Enums;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.GeracaoArquivos;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
@@ -220,10 +221,9 @@ namespace EstacionamentoTech.MVC.Controllers
         public IActionResult PagarEstacionamento(int id)
         {
             var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
-            var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {estacionamento.Veiculo}");
 
-            estacionamento.Proprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), @$"Id = {veiculo.Cliente}").Nome;
-            estacionamento.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
+            var extensor = new HistoricoEstacionamentosExtensor(_contexto, estacionamento);
+            extensor.CarregarDadosProprietarioVeiculo();
 
             ViewBag.FormasDePagamento = new List<SelectListItem>() 
             {
@@ -244,8 +244,84 @@ namespace EstacionamentoTech.MVC.Controllers
             estacionamento.FormaPagamento = int.Parse(formaDePagamento);
 
             _contexto.Update(new TabelaHistoricoEstacionamentos(), estacionamento);
-            //gerar arquivo de compra
-            return RedirectToAction(nameof(Index));
+
+            ViewBag.FormasDePagamento = new List<SelectListItem>()
+            {
+                new SelectListItem 
+                { 
+                    Value = estacionamento.FormaPagamento.ToString(), 
+                    Text = ((FormasPagamento?)estacionamento.FormaPagamento).ToString(),
+                    Selected = true
+                }
+            };
+
+            TempData["Mensagens"] = new List<string> { "Estacionamento pago com sucesso!" };
+            TempData["Tipo"] = (int)TiposValidacoes.Informativo;
+
+            return View(estacionamento);
+        }
+
+        [HttpGet]
+        public IActionResult ArquivoCompra (int id, string? mensagem, TiposValidacoes? tipo)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+
+            var extensor = new HistoricoEstacionamentosExtensor(_contexto, estacionamento);
+            extensor.CarregarDadosProprietarioVeiculo();
+            extensor.CarregarFormaPagamentoEnum();
+
+            if (mensagem != null && tipo != null)
+            {
+                TempData["Mensagens"] = new List<string> { mensagem };
+                TempData["Tipo"] = (int)tipo;
+            }
+
+            return View(estacionamento);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GerarArquivoCompra(int id)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"Id = {id}");
+
+            var extensor = new HistoricoEstacionamentosExtensor(_contexto, estacionamento);
+            extensor.CarregarDadosProprietarioVeiculo();
+            extensor.CarregarFormaPagamentoEnum();
+
+            var dto = new ArquivoCompraDataContract()
+            {
+                Serial = Guid.NewGuid(),
+                Veiculo = estacionamento.IdentificacaoVeiculo,
+                Proprietario = estacionamento.Proprietario,
+                Entrada = estacionamento.Entrada,
+                Saida = estacionamento.Saida.Value,
+                Valor = estacionamento.ValorCobrado.Value,
+                FormaPagamento = estacionamento.FormaPagamentoEnum.ToString()
+            };
+
+            return await ExportarArquivoCompra(id, dto);
+        }
+
+        private async Task<IActionResult> ExportarArquivoCompra(int id, ArquivoCompraDataContract dto)
+        {
+            try
+            {
+                var exportador = new GeradorArquivoCompra();
+                var bytes = await exportador.GerarArquivoTxtBytesAsync(dto);
+
+                return File(bytes, "text/plain", $"comprov_pag_{DateTime.Now:ddMMyyyy_HHmmss}.txt");
+            }
+            catch (Exception ex)
+            {
+                string mensagem = "Erro ao gerar arquivo! " + ex.Message;
+                var tipo = TiposValidacoes.Inconsistencia;
+
+                return RedirectToAction(
+                        nameof(ArquivoCompra),
+                        new { id, mensagem, tipo }
+                );
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

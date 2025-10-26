@@ -1,7 +1,7 @@
 ﻿@model EstacionamentoTech.Models.HistoricoEstacionamentos
 
 @{
-	ViewData["Title"] = "Editar Histórico de Estacionamento";
+	ViewData["Title"] = "Finalização de Estacionamento";
 }
 
 <h1>
@@ -87,6 +87,11 @@
 				{
 					<input type="submit" value="Calcular" class="btn btn-primary" />
 				}
+				else
+				{
+					<a asp-action="PagarEstacionamento" asp-route-id="@Model.Id"  class="btn btn-success">Pagar</a>
+					<input type="submit" value="Recalcular" class="btn btn-outline-success" />
+				}
 			</div>
 		</form>
 	</div>
@@ -94,7 +99,6 @@
 </div>
 
 <hr/>
-
 <div>
 	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
 </div>

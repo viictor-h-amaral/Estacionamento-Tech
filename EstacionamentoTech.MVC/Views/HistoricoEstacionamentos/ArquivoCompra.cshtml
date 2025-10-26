@@ -1,7 +1,7 @@
 ﻿@model EstacionamentoTech.Models.HistoricoEstacionamentos
 
 @{
-	ViewData["Title"] = "Pagamento do Estacionamento";
+	ViewData["Title"] = "Arquivo de compra";
 }
 
 <h1>
@@ -89,49 +89,20 @@
 			@Html.DisplayFor(model => model.ValorCobrado)
 		</dt>
 		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.LogCalculo)
+			@Html.DisplayNameFor(model => model.FormaPagamentoEnum)
 		</dt>
 		<dt class="col-sm-10">
-			<textarea class="form-control"
-					  rows="6" readonly
-					  style="resize: vertical; background-color: #f8f9fa; font-family: monospace; font-size: 0.9em;"
-				>@Model.LogCalculo</textarea>
+			@Html.DisplayFor(model => model.FormaPagamentoEnum)
 		</dt>
 	</dl>
 </div>
 
 <div class="row">
-
-	<div class="col-md-4">
-		<form asp-action="PagarEstacionamento">
-			<div class="form-group">
-				<label class="control-label">Forma de pagamento</label>
-				@Html.DropDownList("formaDePagamento",
-				(IEnumerable<SelectListItem>)ViewBag.FormasDePagamento,
-								"Selecione a forma de pagamento",
-								new { @class = "form-control", required = "required" })
-			</div>
-
-			<input type="hidden" name="id" value="@Model.Id" />
-
-			<br />
-			@if (!Model.Pago)
-			{
-				<div class="form-group">
-					<input type="submit" value="Pagar" class="btn btn-success" />
-				</div>
-			}
-			else
-			{
-				<div>
-					<a asp-action="GerarArquivoCompra"
-					   asp-route-id="@Model.Id"
-					   class="btn btn-primary">Gerar Arquivo</a>
-				</div>
-			}
-		</form>
+	<div class="col-sm-4">
+	<a asp-action="GerarArquivoCompra" 
+		asp-route-id="@Model.Id"
+		class="btn btn-primary">Gerar Arquivo</a>
 	</div>
-
 </div>
 
 <hr />
