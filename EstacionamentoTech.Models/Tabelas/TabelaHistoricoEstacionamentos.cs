@@ -19,6 +19,7 @@ namespace EstacionamentoTech.Models.Tabelas
             { "HorasCobradas", typeof(decimal) },
             { "ValorCobrado", typeof(decimal) },
             { "Pago", typeof(bool) },
+            { "FormaPagamento", typeof(int) },
             { "LogCalculo", typeof(string) }
         };
     }

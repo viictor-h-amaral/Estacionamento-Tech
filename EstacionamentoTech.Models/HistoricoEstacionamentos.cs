@@ -19,6 +19,7 @@ namespace EstacionamentoTech.Models
         public decimal? HorasCobradas { get; set; }
         public decimal? ValorCobrado { get; set; }
         public bool Pago { get; set; } = false;
+        public int? FormaPagamento {  get; set; }
         public string? LogCalculo {  get; set; }
     }
 }
