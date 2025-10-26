@@ -73,6 +73,9 @@ namespace EstacionamentoTech.MVC.Models.Validadores
             if (estacionamento.Saida is null)
                 return new MensagemValidacao("EST_004");
 
+            if (estacionamento.Entrada > estacionamento.Saida.Value)
+                return new MensagemValidacao("EST_006");
+
             var criterioSelecaoValores = new CriterioSelecao(
                                         @" ( DATAINICIO <= @SAIDA )
                                            AND 

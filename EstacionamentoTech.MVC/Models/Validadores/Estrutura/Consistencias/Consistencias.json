@@ -48,5 +48,10 @@
         "Codigo": "EST_005",
         "Mensagem": "Não há abrangências parametrizadas para o período de estacionamento do veículo!",
         "Tipo": 4
+    },
+    {
+        "Codigo": "EST_006",
+        "Mensagem": "Saída do veículo não pode ser anterior à sua entrada!",
+        "Tipo": 4
     }
 ]
