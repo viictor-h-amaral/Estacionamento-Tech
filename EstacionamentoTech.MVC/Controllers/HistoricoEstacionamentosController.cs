@@ -3,6 +3,7 @@ using System.Diagnostics;
 using EstacionamentoTech.Data;
 using EstacionamentoTech.Data.Utilidades;
 using EstacionamentoTech.Models;
+using EstacionamentoTech.Models.Enums;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
 using EstacionamentoTech.MVC.Models.Validadores;
@@ -219,29 +220,17 @@ namespace EstacionamentoTech.MVC.Controllers
         public IActionResult PagarEstacionamento(int id)
         {
             var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+            var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {estacionamento.Veiculo}");
+
+            estacionamento.Proprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), @$"Id = {veiculo.Cliente}").Nome;
+            estacionamento.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
 
             ViewBag.FormasDePagamento = new List<SelectListItem>() 
             {
-                new SelectListItem
-                {
-                    Value = "1",
-                    Text = "Dinheiro"
-                },
-                new SelectListItem
-                {
-                    Value = "2",
-                    Text = "PIX"
-                },
-                new SelectListItem
-                {
-                    Value = "3",
-                    Text = "Crédito"
-                },
-                new SelectListItem
-                {
-                    Value = "4",
-                    Text = "Débito"
-                }
+                new SelectListItem { Value = ((int)FormasPagamento.Dinheiro).ToString(), Text = "Dinheiro" },
+                new SelectListItem { Value = ((int)FormasPagamento.PIX).ToString(), Text = "PIX" },
+                new SelectListItem { Value = ((int)FormasPagamento.Crédito).ToString(), Text = "Crédito" },
+                new SelectListItem { Value = ((int) FormasPagamento.Débito).ToString(), Text = "Débito" }
             };
             return View(estacionamento);
         }
@@ -252,9 +241,10 @@ namespace EstacionamentoTech.MVC.Controllers
             var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
 
             estacionamento.Pago = true;
+            estacionamento.FormaPagamento = int.Parse(formaDePagamento);
+
             _contexto.Update(new TabelaHistoricoEstacionamentos(), estacionamento);
             //gerar arquivo de compra
-            ;
             return RedirectToAction(nameof(Index));
         }
 

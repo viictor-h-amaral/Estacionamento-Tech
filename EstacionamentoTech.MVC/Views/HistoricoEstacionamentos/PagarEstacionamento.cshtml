@@ -92,7 +92,10 @@
 			@Html.DisplayNameFor(model => model.LogCalculo)
 		</dt>
 		<dt class="col-sm-10">
-			@Html.DisplayFor(model => model.LogCalculo)
+			<textarea class="form-control"
+					  rows="6" readonly
+					  style="resize: vertical; background-color: #f8f9fa; font-family: monospace; font-size: 0.9em;"
+				>@Model.LogCalculo</textarea>
 		</dt>
 	</dl>
 </div>
