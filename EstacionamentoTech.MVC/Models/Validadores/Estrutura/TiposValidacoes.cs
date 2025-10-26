@@ -2,7 +2,7 @@
 {
     public enum TiposValidacoes
     {
-        Confirmaçao = 1,
+        Informativo = 1,
         Advertencia = 2,
         Inconsistencia = 4
     }
