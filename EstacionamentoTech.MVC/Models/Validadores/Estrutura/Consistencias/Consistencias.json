@@ -1,0 +1,57 @@
+﻿[
+    {
+        "Codigo": "CLI_001",
+        "Mensagem": "Cliente está registrado como proprietário de um veículo!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "VEI_001",
+        "Mensagem": "Veículo está registrado em algum histórico de estacionamento!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "VIG_001",
+        "Mensagem": "Data de Início e Fim da vigência estão inválidas!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "VIG_002",
+        "Mensagem": "Já há alguma vigência cobrindo este período!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "VIG_003",
+        "Mensagem": "Não é possível a edição desta vigência pois há estacionamentos relacionados a ela!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_001",
+        "Mensagem": "Data de início do estacionamento não pode ser posterior à data corrente!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_002",
+        "Mensagem": "Veículo selecionado já está estacionado no período selecionado!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_003",
+        "Mensagem": "Não é possível apagar históricos de estacionamentos já pagos!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_004",
+        "Mensagem": "Para finalizar um estacionamento, deve-se preencher a data de saída do veículo!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_005",
+        "Mensagem": "Não há abrangências parametrizadas para o período de estacionamento do veículo!",
+        "Tipo": 4
+    },
+    {
+        "Codigo": "EST_006",
+        "Mensagem": "Saída do veículo não pode ser anterior à sua entrada!",
+        "Tipo": 4
+    }
+]

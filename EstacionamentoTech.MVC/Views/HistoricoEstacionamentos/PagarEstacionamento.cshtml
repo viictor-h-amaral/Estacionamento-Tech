@@ -1,0 +1,141 @@
+﻿@model EstacionamentoTech.Models.HistoricoEstacionamentos
+
+@{
+	ViewData["Title"] = "Pagamento do Estacionamento";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+@if (TempData["Mensagens"] is List<string> mensagens)
+{
+	string tipoMensagem = TempData["Tipo"].ToString();
+
+	switch (tipoMensagem)
+	{
+		case "4":
+			<div class="alert alert-danger" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "2":
+			<div class="alert alert-warning" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "1":
+			<div class="alert alert-info" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+	}
+}
+
+<hr>
+
+<div>
+	<h3>Dados do estacionamento</h3>
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.IdentificacaoVeiculo)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.IdentificacaoVeiculo)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Proprietario)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Proprietario)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Entrada)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Entrada)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Saida)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Saida)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.HorasCobradas)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.HorasCobradas)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ValorCobrado)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.ValorCobrado)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.LogCalculo)
+		</dt>
+		<dt class="col-sm-10">
+			<textarea class="form-control"
+					  rows="6" readonly
+					  style="resize: vertical; background-color: #f8f9fa; font-family: monospace; font-size: 0.9em;"
+				>@Model.LogCalculo</textarea>
+		</dt>
+	</dl>
+</div>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<form asp-action="PagarEstacionamento">
+			<div class="form-group">
+				<label class="control-label">Forma de pagamento</label>
+				@Html.DropDownList("formaDePagamento",
+				(IEnumerable<SelectListItem>)ViewBag.FormasDePagamento,
+								"Selecione a forma de pagamento",
+								new { @class = "form-control", required = "required" })
+			</div>
+
+			<input type="hidden" name="id" value="@Model.Id" />
+
+			<br />
+			@if (!Model.Pago)
+			{
+				<div class="form-group">
+					<input type="submit" value="Pagar" class="btn btn-success" />
+				</div>
+			}
+			else
+			{
+				<div>
+					<a asp-action="GerarArquivoCompra"
+					   asp-route-id="@Model.Id"
+					   class="btn btn-primary">Gerar Arquivo</a>
+				</div>
+			}
+		</form>
+	</div>
+
+</div>
+
+<hr />
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

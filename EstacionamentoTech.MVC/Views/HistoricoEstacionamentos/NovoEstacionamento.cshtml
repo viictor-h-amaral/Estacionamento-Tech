@@ -1,0 +1,71 @@
+﻿@model EstacionamentoTech.Models.HistoricoEstacionamentos
+
+@{
+	ViewData["Title"] = "Adicionar Novo Histórico de Estacionamento";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+@if (TempData["Mensagens"] is List<string> mensagens)
+{
+	string tipoMensagem = TempData["Tipo"].ToString();
+
+	switch (tipoMensagem)
+	{
+		case "4":
+			<div class="alert alert-danger" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "2":
+			<div class="alert alert-warning" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "1":
+			<div class="alert alert-info" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+	}
+}
+
+<hr>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<form asp-action="NovoEstacionamento">
+			<div class="form-group">
+				<label asp-for="Veiculo" class="control-label"></label>
+				@Html.DropDownList("Veiculo", (IEnumerable<SelectListItem>)ViewBag.Veiculos, "Selecione o veículo")
+			</div>
+			<div class="form-group">
+				<label asp-for="Entrada" class="control-label"></label>
+				<input asp-for="Entrada" class="form-control" />
+			</div>
+			<br />
+			<div class="form-group">
+				<input type="submit" value="Criar" class="btn btn-primary"/>
+			</div>
+		</form>
+	</div>
+
+</div>
+
+<hr/>
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

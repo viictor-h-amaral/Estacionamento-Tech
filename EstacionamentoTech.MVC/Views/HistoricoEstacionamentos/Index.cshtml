@@ -1,0 +1,100 @@
+﻿@model IEnumerable<EstacionamentoTech.Models.HistoricoEstacionamentos>
+
+@{
+	ViewData["Title"] = "Histórico de estacionamentos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+	<a asp-action="NovoEstacionamento" class="btn btn-primary" >Adicionar Novo Histórico de Estacionamento</a>
+</p>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.IdentificacaoVeiculo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Proprietario)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Entrada)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Saida)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.HorasCobradas)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ValorCobrado)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Pago)
+			</th>
+			<th>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach(var estacionamento in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(model => estacionamento.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.IdentificacaoVeiculo)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.Proprietario)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.Entrada)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.Saida)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.HorasCobradas)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.ValorCobrado)
+				</td>
+				<td>
+					@Html.DisplayFor(model => estacionamento.Pago)
+				</td>
+				<td>
+
+					@if (estacionamento.Saida is null)
+					{
+						<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a>
+						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Fechar</a>
+					}
+
+					@if (!estacionamento.Pago)
+					{
+						if (estacionamento.ValorCobrado.HasValue)
+						{
+							<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Pagar</a>
+						}
+						<a asp-action="DeletarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+					}
+					else
+					{
+						<a asp-action="ArquivoCompra" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Arquivo de compra</a>
+					}
+					
+				</td>
+			</tr>
+		}
+	</tbody>
+
+</table>

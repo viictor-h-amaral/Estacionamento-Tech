@@ -1,0 +1,70 @@
+﻿@model IEnumerable<EstacionamentoTech.Models.Veiculo>
+
+@{
+	ViewData["Title"] = "Veículos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+	<a asp-action="NovoVeiculo" class="btn btn-primary">Adicionar Novo Veículo</a>
+</p>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Nome)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.NomeCliente)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Ano)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Tipo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Placa)
+			</th>
+			<th>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach (var veiculo in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(model => veiculo.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(model => veiculo.Nome)
+				</td>
+				<td>
+					@Html.DisplayFor(model => veiculo.NomeCliente)
+				</td>
+				<td>
+					@Html.DisplayFor(model => veiculo.Ano)
+				</td>
+				<td>
+					@Html.DisplayFor(model => veiculo.Tipo)
+				</td>
+				<td>
+					@Html.DisplayFor(model => veiculo.Placa)
+				</td>
+				<td>
+					<a asp-action="EditarVeiculo" asp-route-id="@veiculo.Id" class="btn btn-secondary">Editar</a> |
+					<a asp-action="DeletarVeiculo" asp-route-id="@veiculo.Id" class="btn btn-danger">Deletar</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+
+</table>

@@ -1,0 +1,27 @@
+﻿
+using EstacionamentoTech.Models.Atributos;
+using EstacionamentoTech.Models.Enums;
+
+namespace EstacionamentoTech.Models
+{
+    public class HistoricoEstacionamentos : IEntityModel
+    {
+        public int Id { get; set; }
+        public int Veiculo { get; set; }
+        public int? Vigencia { get; set; }
+
+        [CampoDetalhe]
+        public string? IdentificacaoVeiculo { get; set; }
+        [CampoDetalhe]
+        public string? Proprietario { get; set; }
+
+        public DateTime Entrada { get; set; }
+        public DateTime? Saida { get; set; }
+        public decimal? HorasCobradas { get; set; }
+        public decimal? ValorCobrado { get; set; }
+        public bool Pago { get; set; } = false;
+        public int? FormaPagamento {  get; set; }
+        public FormasPagamento? FormaPagamentoEnum {  get; set; }
+        public string? LogCalculo {  get; set; }
+    }
+}

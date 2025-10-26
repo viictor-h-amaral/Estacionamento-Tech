@@ -1,0 +1,67 @@
+﻿@model EstacionamentoTech.Models.Cliente
+
+@{
+	ViewData["Title"] = "Editar Cliente";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+@if (TempData["Mensagens"] is List<string> mensagens)
+{
+	string tipoMensagem = TempData["Tipo"].ToString();
+
+	switch (tipoMensagem)
+	{
+		case "4":
+			<div class="alert alert-danger" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "2":
+			<div class="alert alert-warning" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "1":
+			<div class="alert alert-info" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+	}
+}
+
+<hr>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<form asp-action="EditarCliente">
+			<div class="form-group">
+				<label asp-for="Nome" class="control-label"></label>
+				<input asp-for="Nome" class="form-control" autofocus />
+			</div>
+			<br />
+			<div class="form-group">
+				<input type="submit" value="Salvar" class="btn btn-primary"/>
+			</div>
+		</form>
+	</div>
+
+</div>
+
+<hr/>
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>
