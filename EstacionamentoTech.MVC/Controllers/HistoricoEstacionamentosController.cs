@@ -324,6 +324,16 @@ namespace EstacionamentoTech.MVC.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult DetalhesEstacionamento(int id)
+        {
+            var estacionamento = _contexto.GetOne<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"id = {id}");
+            var extensor = new HistoricoEstacionamentosExtensor(_contexto, estacionamento);
+            extensor.CarregarDadosProprietarioVeiculo();
+            extensor.CarregarFormaPagamentoEnum();
+            return View(estacionamento);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

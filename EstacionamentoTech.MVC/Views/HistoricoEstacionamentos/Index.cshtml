@@ -73,25 +73,24 @@
 				</td>
 				<td>
 
-					@if (estacionamento.Saida is null)
+					@if (!estacionamento.Saida.HasValue)
 					{
 						<a asp-action="EditarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-secondary">Editar</a>
 						<a asp-action="FecharEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Fechar</a>
-					}
-
-					@if (!estacionamento.Pago)
-					{
-						if (estacionamento.ValorCobrado.HasValue)
-						{
-							<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Pagar</a>
-						}
 						<a asp-action="DeletarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+						<a asp-action="DetalhesEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Detalhes</a>
+					}
+					else if (!estacionamento.Pago)
+					{
+						<a asp-action="PagarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-success">Pagar</a>
+						<a asp-action="DeletarEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-danger">Deletar</a>
+						<a asp-action="DetalhesEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Detalhes</a>
 					}
 					else
 					{
-						<a asp-action="ArquivoCompra" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Arquivo de compra</a>
+						<a asp-action="ArquivoCompra" asp-route-id="@estacionamento.Id" class="btn btn-success">Arquivo de compra</a>
+						<a asp-action="DetalhesEstacionamento" asp-route-id="@estacionamento.Id" class="btn btn-outline-success">Detalhes</a>
 					}
-					
 				</td>
 			</tr>
 		}
