@@ -13,7 +13,7 @@ namespace EstacionamentoTech.Data
         {
             var listaEntidades = new List<T>();
 
-            string whereClause = criterioWhere is null ? "" : $"WHERE {criterioWhere}";
+            string whereClause = string.IsNullOrEmpty(criterioWhere) ? "" : $"WHERE {criterioWhere}";
             string strComando = $@"SELECT * 
                                 FROM {dataBaseName}.{tabela.NomeTabela} A
                                 {whereClause}";
