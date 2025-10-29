@@ -30,6 +30,14 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(clientes);
         }
 
+        [HttpPost]
+        public IActionResult Index(string NomeBusca)
+        {
+            var clientes = _contexto.GetMany<Cliente>(new TabelaClientes(), $"Nome LIKE '%{NomeBusca}%'");
+            TempData["NomeBusca"] = NomeBusca;
+            return View(clientes);
+        }
+
         [HttpGet]
         public IActionResult NovoCliente()
         {
