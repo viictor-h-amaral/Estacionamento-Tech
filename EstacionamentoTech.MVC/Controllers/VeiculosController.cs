@@ -38,6 +38,52 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(veiculos);
         }
 
+        [HttpPost]
+        public IActionResult FiltrarVeiculos(string? Placa = null,
+                                             string? Nome = null,
+                                             string? Cliente = null,
+                                             string? Tipo = null)
+        {
+            string? criterioWhere = string.Empty;
+            if (!string.IsNullOrEmpty(Placa))
+            {
+                criterioWhere += $" Placa LIKE '%{Placa}%' ";
+            }
+
+            if (!string.IsNullOrEmpty(Nome))
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 $" Nome LIKE '%{Nome}%' ";
+            }
+
+            if (!string.IsNullOrEmpty(Cliente))
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 @$" CLIENTE IN (SELECT A.ID 
+                                                FROM estacionamentotechdb.clientes A
+                                                WHERE A.NOME LIKE '%{Cliente}%')";
+            }
+
+            if (!string.IsNullOrEmpty(Tipo))
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 $" TIPO LIKE '%{Tipo}%' ";
+            }
+
+            var veiculos = _contexto.GetMany<Veiculo>(new TabelaVeiculo(), $"{criterioWhere}");
+            foreach (var veiculo in veiculos)
+            {
+                veiculo.NomeCliente = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}").Nome;
+            }
+
+            TempData["Placa"] = Placa;
+            TempData["Cliente"] = Cliente;
+            TempData["Nome"] = Nome;
+            TempData["Tipo"] = Tipo;
+
+            return View(nameof(Index), veiculos);
+        }
+
         [HttpGet]
         public IActionResult NovoVeiculo()
         {

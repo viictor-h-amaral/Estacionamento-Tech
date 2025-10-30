@@ -12,6 +12,31 @@
 
 <table class="table">
 
+	<form asp-action="FiltrarVeiculos" method="post">
+		<div class="form-group">
+			<div>
+				<h6>Placa:</h6> <input type="text" name="Placa" class="btn btn-outline-dark"
+								   value="@(TempData["Placa"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Nome do veículo:</h6> <input type="text" name="Nome" class="btn btn-outline-dark"
+									 value="@(TempData["Nome"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Proprietário:</h6> <input type="text" name="Cliente" class="btn btn-outline-dark"
+										  value="@(TempData["Cliente"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Tipo de veículo:</h6> <input type="text" name="Tipo" class="btn btn-outline-dark"
+									 value="@(TempData["Tipo"]?.ToString() ?? "")">
+			</div>
+			<br />
+			<input type="submit" value="Buscar" class="btn btn-primary" />
+			<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+		</div>
+		<br />
+	</form>
+
 	<thead>
 		<tr>
 			<th>
