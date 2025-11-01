@@ -1,55 +1,151 @@
 ﻿@model IEnumerable<EstacionamentoTech.Models.Cliente>
 
+<style>
+    .pagination {
+        margin: 20px 0;
+    }
+
+    .pagination-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .page-link {
+        color: #007bff;
+    }
+
+    .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+</style>
+
 @{
-	ViewData["Title"] = "Clientes";
+    ViewData["Title"] = "Clientes";
+    int paginaAtual = ViewBag.PaginaAtual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    string nomeBusca = ViewBag.NomeBusca ?? "";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <p>
-	<a asp-action="NovoCliente" class="btn btn-primary" >Adicionar Novo Cliente</a>
+    <a asp-action="NovoCliente" class="btn btn-primary">Adicionar Novo Cliente</a>
 </p>
 
 <table class="table">
 
-	<form asp-action="Index">
-		<div class="form-group">
-			Título: <input type="text" name="NomeBusca"
-						value=@(TempData["NomeBusca"]?.ToString() ?? "") >
-			<input type="submit" value="Buscar" />
-		</div>
-		<br />
-	</form>
+    <form asp-action="Index" method="post">
+        <div class="form-group">
+            Nome: <input type="text" name="NomeBusca" value="@nomeBusca" />
+            <input type="submit" value="Buscar" class="btn btn-outline-primary" />
+            @if (!string.IsNullOrEmpty(nomeBusca))
+            {
+                <a asp-action="Index" class="btn btn-secondary">Limpar Filtro</a>
+            }
+        </div>
+        <br />
+    </form>
 
-	<thead>
-		<tr>
-			<th>
-				@Html.DisplayNameFor(model => model.Id)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Nome)
-			</th>
-			<th>
-			</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
 
-	<tbody>
-		@foreach(var cliente in Model)
-		{
-			<tr>
-				<td>
-					@Html.DisplayFor(model => cliente.Id)
-				</td>
-				<td>
-					@Html.DisplayFor(model => cliente.Nome)
-				</td>
-				<td>
-					<a asp-action="EditarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-secondary">Editar</a> |
-					<a asp-action="DeletarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-danger">Deletar</a>
-				</td>
-			</tr>
-		}
-	</tbody>
+    <tbody>
+        @foreach (var cliente in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => cliente.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => cliente.Nome)
+                </td>
+                <td>
+                    <a asp-action="EditarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-secondary">Editar</a> |
+                    <a asp-action="DeletarCliente" asp-route-id="@cliente.Id" asp-route-nome="@cliente.Nome" class="btn btn-danger">Deletar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
 
 </table>
+
+<!-- Controles de Paginação -->
+@if (totalPaginas > 1)
+{
+    <nav aria-label="Navegação de páginas">
+        <ul class="pagination">
+            <!-- Botão Anterior -->
+            @if (paginaAtual > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pagina = paginaAtual - 1, registrosPorPagina = ViewBag.RegistrosPorPagina, NomeBusca = nomeBusca })">
+                        Anterior
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li>
+            }
+
+            <!-- Números das Páginas -->
+            @for (int i = 1; i <= totalPaginas; i++)
+            {
+                if (i == paginaAtual)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { pagina = i, registrosPorPagina = ViewBag.RegistrosPorPagina, NomeBusca = nomeBusca })">
+                            @i
+                        </a>
+                    </li>
+                }
+            }
+
+            <!-- Botão Próximo -->
+            @if (paginaAtual < totalPaginas)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pagina = paginaAtual + 1, registrosPorPagina = ViewBag.RegistrosPorPagina, NomeBusca = nomeBusca })">
+                        Próximo
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Próximo</span>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<!-- Informações da Paginação -->
+<div class="pagination-info">
+    <small class="text-muted">
+        Página @paginaAtual de @totalPaginas
+        @if (!string.IsNullOrEmpty(nomeBusca))
+        {
+            <text>(Filtrado por: "@nomeBusca")</text>
+        }
+    </small>
+</div>

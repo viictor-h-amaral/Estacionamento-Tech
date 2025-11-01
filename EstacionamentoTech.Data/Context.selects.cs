@@ -246,5 +246,77 @@ namespace EstacionamentoTech.Data
                 _connection.Close();
             }
         }
+
+        public IEnumerable<T> GetManyComPaginacao<T>(ITabela tabela, 
+                                                    int offSet = 0, 
+                                                    int limit = 10, 
+                                                    string? criterioWhere = null) where T : class, IEntityModel
+        {
+            var listaEntidades = new List<T>();
+
+            string whereClause = string.IsNullOrEmpty(criterioWhere) ? "" : $"WHERE {criterioWhere}";
+            string strComando = $@"SELECT * 
+                        FROM {dataBaseName}.{tabela.NomeTabela} A
+                        {whereClause}
+                        LIMIT {limit} 
+                        OFFSET {offSet}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                using (MySqlDataReader leitorDados = comando.ExecuteReader())
+                {
+                    while (leitorDados.Read())
+                    {
+                        T entidade = Activator.CreateInstance<T>();
+                        foreach (var campo in tabela.CamposTabela)
+                        {
+                            var valor = leitorDados[campo.Key];
+                            if (valor != DBNull.Value)
+                            {
+                                entidade.GetType().GetProperty(campo.Key)?.SetValue(entidade, Convert.ChangeType(valor, campo.Value));
+                            }
+                        }
+                        listaEntidades.Add(entidade);
+                    }
+                }
+                return listaEntidades;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public int Count<T>(ITabela tabela, string? criterioWhere = null) where T : class, IEntityModel
+        {
+            string whereClause = string.IsNullOrEmpty(criterioWhere) ? "" : $"WHERE {criterioWhere}";
+            string strComando = $@"SELECT COUNT(*) 
+                        FROM {dataBaseName}.{tabela.NomeTabela} A
+                        {whereClause}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                var resultado = comando.ExecuteScalar();
+                return Convert.ToInt32(resultado);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
     }
 }
