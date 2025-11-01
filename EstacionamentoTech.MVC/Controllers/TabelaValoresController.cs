@@ -31,6 +31,46 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(vigencias);
         }
 
+        [HttpPost]
+        public IActionResult FiltrarVigencias( DateOnly? InicioVigencia = null,
+                                    DateOnly? FimVigencia = null, 
+                                    decimal? HoraInicial = null, 
+                                    decimal? HoraAdicional = null)
+        {
+            string? criterioWhere = string.Empty;
+            if (InicioVigencia.HasValue)
+            {
+                criterioWhere += $" DataFim >= '{InicioVigencia.Value:yyyy-MM-dd}' ";
+            }
+
+            if (FimVigencia.HasValue)
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 $" DataInicio <= '{FimVigencia.Value:yyyy-MM-dd}' ";
+            }
+
+            if (HoraInicial.HasValue)
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 $" ValorHoraInicial = {HoraInicial.Value} ";
+            }
+
+            if (HoraAdicional.HasValue)
+            {
+                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
+                                 $" ValorHoraAdicional = {HoraAdicional.Value} ";
+            }
+
+            var vigencias = _contexto.GetMany<TabelaValores>(new TabelaTabelaValores(), $"{criterioWhere}");
+
+            TempData["InicioVigencia"] = InicioVigencia?.ToString("yyyy-MM-dd");
+            TempData["FimVigencia"] = FimVigencia?.ToString("yyyy-MM-dd");
+            TempData["HoraInicial"] = HoraInicial;
+            TempData["HoraAdicional"] = HoraAdicional;
+
+            return View(nameof(Index), vigencias);
+        }
+
         [HttpGet]
         public IActionResult NovaVigencia()
         {

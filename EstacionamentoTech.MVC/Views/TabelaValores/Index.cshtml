@@ -12,6 +12,31 @@
 
 <table class="table">
 
+	<form asp-action="FiltrarVigencias" method="post">
+		<div class="form-group">
+			<div>
+				<h6>Fim posterior à:</h6> <input type="date" name="InicioVigencia" class="btn btn-outline-dark"
+						value="@(TempData["InicioVigencia"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Início anterior à:</h6> <input type="date" name="FimVigencia" class="btn btn-outline-dark"
+						 value="@(TempData["FimVigencia"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Hora inicial:</h6> <input type="number" step="0.01" name="HoraInicial" class="btn btn-outline-dark"
+							 value="@(TempData["HoraInicial"]?.ToString() ?? "")">
+			</div>
+			<div>
+				<h6>Hora adicional:</h6> <input type="number" step="0.01" name="HoraAdicional" class="btn btn-outline-dark"
+							   value="@(TempData["HoraAdicional"]?.ToString() ?? "")">
+			</div>
+			<br />
+			<input type="submit" value="Buscar" class="btn btn-primary" />
+			<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+		</div>
+		<br />
+	</form>
+
 	<thead>
 		<tr>
 			<th>

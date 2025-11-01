@@ -12,6 +12,15 @@
 
 <table class="table">
 
+	<form asp-action="Index">
+		<div class="form-group">
+			Título: <input type="text" name="NomeBusca"
+						value=@(TempData["NomeBusca"]?.ToString() ?? "") >
+			<input type="submit" value="Buscar" />
+		</div>
+		<br />
+	</form>
+
 	<thead>
 		<tr>
 			<th>

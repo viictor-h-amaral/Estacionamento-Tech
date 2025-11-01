@@ -1,0 +1,129 @@
+﻿@model EstacionamentoTech.Models.HistoricoEstacionamentos
+
+@{
+	ViewData["Title"] = "Detalhes";
+}
+
+<h1>
+	@ViewData["Title"]
+</h1>
+
+@if (TempData["Mensagens"] is List<string> mensagens)
+{
+	string tipoMensagem = TempData["Tipo"].ToString();
+
+	switch (tipoMensagem)
+	{
+		case "4":
+			<div class="alert alert-danger" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "2":
+			<div class="alert alert-warning" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+		case "1":
+			<div class="alert alert-info" role="alert">
+				@foreach (var msg in mensagens)
+				{
+					<p>@msg</p>
+				}
+			</div>
+			break;
+	}
+}
+
+<hr>
+
+<div>
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Id)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.IdentificacaoVeiculo)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.IdentificacaoVeiculo)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Proprietario)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Proprietario)
+		</dt>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Entrada)
+		</dt>
+		<dt class="col-sm-10">
+			@Html.DisplayFor(model => model.Entrada)
+		</dt>
+		@if (Model.Saida.HasValue)
+		{
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.Saida)
+			</dt>
+			<dt class="col-sm-10">
+				@Html.DisplayFor(model => model.Saida)
+			</dt>
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.HorasCobradas)
+			</dt>
+			<dt class="col-sm-10">
+				@Html.DisplayFor(model => model.HorasCobradas)
+			</dt>
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.ValorCobrado)
+			</dt>
+			<dt class="col-sm-10">
+				@Html.DisplayFor(model => model.ValorCobrado)
+			</dt>
+		}
+		else
+		{
+			<dt class="col-sm-2">
+				Saída
+			</dt>
+			<dt class="col-sm-10">
+				Veículo ainda no estacionamento
+			</dt>
+			
+		}
+
+		@if (Model.FormaPagamento.HasValue)
+		{
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.FormaPagamentoEnum)
+			</dt>
+			<dt class="col-sm-10">
+				@Html.DisplayFor(model => model.FormaPagamentoEnum)
+			</dt>
+		}
+		else
+		{
+			<dt class="col-sm-2">
+				Pagamento
+			</dt>
+			<dt class="col-sm-10">
+				Estacionamento não pago
+			</dt>
+		}
+	</dl>
+</div>
+
+<hr />
+
+<div>
+	<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>
