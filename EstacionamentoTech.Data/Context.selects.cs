@@ -250,11 +250,11 @@ namespace EstacionamentoTech.Data
         public IEnumerable<T> GetManyComPaginacao<T>(ITabela tabela, 
                                                     int offSet = 0, 
                                                     int limit = 10, 
-                                                    string? criterioWhere = null) where T : class, IEntityModel
+                                                    CriterioSelecao? criterioSelecao = null) where T : class, IEntityModel
         {
             var listaEntidades = new List<T>();
 
-            string whereClause = string.IsNullOrEmpty(criterioWhere) ? "" : $"WHERE {criterioWhere}";
+            string whereClause = criterioSelecao == null ? string.Empty : $"WHERE {criterioSelecao.ClausulaWhere}";
             string strComando = $@"SELECT * 
                         FROM {dataBaseName}.{tabela.NomeTabela} A
                         {whereClause}
@@ -265,6 +265,11 @@ namespace EstacionamentoTech.Data
             {
                 _connection.Open();
                 var comando = new MySqlCommand(strComando, _connection);
+
+                foreach (var parametro in criterioSelecao?.Parametros ?? new Dictionary<string, object?>())
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
 
                 using (MySqlDataReader leitorDados = comando.ExecuteReader())
                 {
@@ -294,17 +299,22 @@ namespace EstacionamentoTech.Data
             }
         }
 
-        public int Count<T>(ITabela tabela, string? criterioWhere = null) where T : class, IEntityModel
+        public int Count<T>(ITabela tabela, CriterioSelecao? criterioSelecao = null) where T : class, IEntityModel
         {
-            string whereClause = string.IsNullOrEmpty(criterioWhere) ? "" : $"WHERE {criterioWhere}";
-            string strComando = $@"SELECT COUNT(*) 
-                        FROM {dataBaseName}.{tabela.NomeTabela} A
-                        {whereClause}";
+            string whereClause = criterioSelecao == null ? string.Empty : $"WHERE {criterioSelecao.ClausulaWhere}";
+            string strComando = $@" SELECT COUNT(*) 
+                                    FROM {dataBaseName}.{tabela.NomeTabela} A
+                                    {whereClause}";
 
             try
             {
                 _connection.Open();
                 var comando = new MySqlCommand(strComando, _connection);
+
+                foreach(var parametro in criterioSelecao?.Parametros ?? new Dictionary<string, object?>())
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
 
                 var resultado = comando.ExecuteScalar();
                 return Convert.ToInt32(resultado);

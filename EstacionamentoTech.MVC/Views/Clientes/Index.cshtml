@@ -35,10 +35,13 @@
 
 <table class="table">
 
-    <form asp-action="Index" method="post">
+    <form asp-action="Index" method="get">
         <div class="form-group">
-            Nome: <input type="text" name="NomeBusca" value="@nomeBusca" />
-            <input type="submit" value="Buscar" class="btn btn-outline-primary" />
+            <div>
+                <h6>Nome: </h6><input type="text" name="NomeBusca" class="btn btn-outline-dark" value="@nomeBusca" />
+            </div>
+            <br />
+            <input type="submit" value="Buscar" class="btn btn-primary" />
             @if (!string.IsNullOrEmpty(nomeBusca))
             {
                 <a asp-action="Index" class="btn btn-secondary">Limpar Filtro</a>

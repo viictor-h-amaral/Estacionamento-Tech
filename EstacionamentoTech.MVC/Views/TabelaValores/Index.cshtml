@@ -1,7 +1,38 @@
 ﻿@model IEnumerable<EstacionamentoTech.Models.TabelaValores>
 
+<style>
+	.pagination {
+		margin: 20px 0;
+	}
+
+	.pagination-info {
+		text-align: center;
+		margin-top: 10px;
+	}
+
+	.page-link {
+		color: #007bff;
+	}
+
+	.page-item.active .page-link {
+		background-color: #007bff;
+		border-color: #007bff;
+	}
+</style>
+
 @{
 	ViewData["Title"] = "Vigências";
+	int paginaAtual = ViewBag.PaginaAtual ?? 1;
+	int totalPaginas = ViewBag.TotalPaginas ?? 1;
+	string inicioVigencia = ViewBag.InicioVigencia ?? "";
+	string fimVigencia = ViewBag.FimVigencia ?? "";
+	string horaInicial = ViewBag.HoraInicial ?? "";
+	string horaAdicional = ViewBag.HoraAdicional ?? "";
+
+	bool possuiFiltro = !string.IsNullOrEmpty(inicioVigencia)
+						|| !string.IsNullOrEmpty(fimVigencia)
+						|| !string.IsNullOrEmpty(horaInicial)
+						|| !string.IsNullOrEmpty(horaAdicional);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -12,27 +43,26 @@
 
 <table class="table">
 
-	<form asp-action="FiltrarVigencias" method="post">
+	<form asp-action="Index" method="get">
 		<div class="form-group">
 			<div>
-				<h6>Fim posterior à:</h6> <input type="date" name="InicioVigencia" class="btn btn-outline-dark"
-						value="@(TempData["InicioVigencia"]?.ToString() ?? "")">
+				<h6>Fim posterior à:</h6> <input type="date" name="InicioVigencia" value="@inicioVigencia" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Início anterior à:</h6> <input type="date" name="FimVigencia" class="btn btn-outline-dark"
-						 value="@(TempData["FimVigencia"]?.ToString() ?? "")">
+				<h6>Início anterior à:</h6> <input type="date" name="FimVigencia" value="@fimVigencia" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Hora inicial:</h6> <input type="number" step="0.01" name="HoraInicial" class="btn btn-outline-dark"
-							 value="@(TempData["HoraInicial"]?.ToString() ?? "")">
+				<h6>Hora inicial:</h6> <input type="number" step="0.01" name="HoraInicial" value="@horaInicial" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Hora adicional:</h6> <input type="number" step="0.01" name="HoraAdicional" class="btn btn-outline-dark"
-							   value="@(TempData["HoraAdicional"]?.ToString() ?? "")">
+				<h6>Hora adicional:</h6> <input type="number" step="0.01" name="HoraAdicional" value="@horaAdicional" class="btn btn-outline-dark">
 			</div>
 			<br />
 			<input type="submit" value="Buscar" class="btn btn-primary" />
-			<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+			@if (possuiFiltro)
+			{
+				<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+			}
 		</div>
 		<br />
 	</form>
@@ -87,3 +117,86 @@
 	</tbody>
 
 </table>
+
+<!-- Estrutura de paginação -->
+@if (totalPaginas > 1)
+{
+	<nav aria-label="Navegação de páginas">
+		<ul class="pagination">
+			<!-- Botão Anterior -->
+			@if (paginaAtual > 1)
+			{
+				<li class="page-item">
+					<a class="page-link" href="@Url.Action("Index", 
+									new {	pagina = paginaAtual - 1, 
+											registrosPorPagina = ViewBag.RegistrosPorPagina,	
+											InicioVigencia = inicioVigencia,
+											FimVigencia = fimVigencia,
+											HoraInicial = horaInicial,
+											HoraAdicional = horaAdicional})">
+						Anterior
+					</a>
+				</li>
+			}
+			else
+			{
+				<li class="page-item disabled">
+					<span class="page-link">Anterior</span>
+				</li>
+			}
+
+			<!-- Números das Páginas -->
+			@for (int i = 1; i <= totalPaginas; i++)
+			{
+				if (i == paginaAtual)
+				{
+					<li class="page-item active">
+						<span class="page-link">@i</span>
+					</li>
+				}
+				else
+				{
+					<li class="page-item">
+						<a class="page-link" href="@Url.Action("Index", 
+								new {	pagina = i, 
+										registrosPorPagina = ViewBag.RegistrosPorPagina, 
+										InicioVigencia = inicioVigencia,
+										FimVigencia = fimVigencia,
+										HoraInicial = horaInicial,
+										HoraAdicional = horaAdicional})">
+							@i
+						</a>
+					</li>
+				}
+			}
+
+			<!-- Botão Próximo -->
+			@if (paginaAtual < totalPaginas)
+			{
+				<li class="page-item">
+					<a class="page-link" href="@Url.Action("Index", 
+						new {	pagina = paginaAtual + 1, 
+								registrosPorPagina = ViewBag.RegistrosPorPagina, 
+								InicioVigencia = inicioVigencia,
+								FimVigencia = fimVigencia,
+								HoraInicial = horaInicial,
+								HoraAdicional = horaAdicional})">
+						Próximo
+					</a>
+				</li>
+			}
+			else
+			{
+				<li class="page-item disabled">
+					<span class="page-link">Próximo</span>
+				</li>
+			}
+		</ul>
+	</nav>
+}
+
+<div class="pagination-info">
+	<small class="text-muted">
+		Página @paginaAtual de @totalPaginas
+	</small>
+</div>

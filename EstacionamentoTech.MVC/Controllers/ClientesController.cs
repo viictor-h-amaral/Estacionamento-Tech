@@ -3,6 +3,7 @@ using EstacionamentoTech.Data;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Filtros;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
@@ -43,26 +44,24 @@ namespace EstacionamentoTech.MVC.Controllers
              * terá o offset = (2-1) * 10 = 10
              */
 
-            int offSet = (pagina - 1) * registrosPorPagina;
+            var filtro = new FiltroSelecaoClientes(NomeBusca);
 
-            string? whereClause = string.IsNullOrEmpty(NomeBusca) 
-                                    ? null 
-                                    : $"Nome LIKE '%{NomeBusca}%'";
+            int offSet = (pagina - 1) * registrosPorPagina;
 
             var clientes = _contexto.GetManyComPaginacao<Cliente>(
                 new TabelaClientes(),
                 offSet,
                 registrosPorPagina,
-                whereClause
+                filtro.CriterioSelecao
             );
 
-            int totalRegistros = _contexto.Count<Cliente>(new TabelaClientes(), whereClause);
+            int totalRegistros = _contexto.Count<Cliente>(new TabelaClientes(), filtro?.CriterioSelecao);
             int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
             ViewBag.PaginaAtual = pagina;
             ViewBag.TotalPaginas = totalPaginas;
             ViewBag.RegistrosPorPagina = registrosPorPagina;
-            ViewBag.NomeBusca = NomeBusca;
+            ViewBag.NomeBusca = filtro?.NomeCliente;
 
             return View(clientes);
         }
