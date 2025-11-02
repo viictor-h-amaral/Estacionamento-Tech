@@ -21,7 +21,7 @@
     },
     {
         "Codigo": "VIG_003",
-        "Mensagem": "Não é possível a edição desta vigência pois há estacionamentos relacionados a ela!",
+        "Mensagem": "Não é possível a edição ou exclusão desta vigência pois há estacionamentos relacionados a ela!",
         "Tipo": 4
     },
     {

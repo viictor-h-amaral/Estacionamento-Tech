@@ -6,7 +6,7 @@ using Org.BouncyCastle.Asn1;
 
 namespace EstacionamentoTech.Data
 {
-    public partial class Context
+    public partial class Context : IContext
     {
         private MySqlConnection _connection;
         private string dataBaseName = "estacionamentotechdb";

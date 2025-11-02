@@ -9,9 +9,9 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 {
     public class TabelaValoresValidador : IValidador<TabelaValores>
     {
-        private readonly Context _contexto;
+        private readonly IContext _contexto;
 
-        public TabelaValoresValidador(Context context)
+        public TabelaValoresValidador(IContext context)
         {
             _contexto = context;
         }
@@ -43,6 +43,11 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 
         public MensagemValidacao? ValidarNoDelete(TabelaValores vigencia)
         {
+            bool possuiEstacionamentosRelacionados = _contexto.TemDependencias<TabelaValores>(vigencia, new TabelaHistoricoEstacionamentos(), "Vigencia");
+
+            if (possuiEstacionamentosRelacionados)
+                return new MensagemValidacao("VIG_003");
+
             return null;
         }
 
