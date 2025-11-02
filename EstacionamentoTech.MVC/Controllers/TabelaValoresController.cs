@@ -59,17 +59,6 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(vigencias);
         }
 
-        /*[HttpPost]
-        public IActionResult FiltrarVigencias( DateOnly? InicioVigencia = null,
-                                                DateOnly? FimVigencia = null, 
-                                                decimal? HoraInicial = null, 
-                                                decimal? HoraAdicional = null)
-        {
-            
-
-            return RedirectToAction(nameof(Index), new { pagina = 1, filtro = filtro });
-        }*/
-
         [HttpGet]
         public IActionResult NovaVigencia()
         {

@@ -66,12 +66,6 @@ namespace EstacionamentoTech.MVC.Controllers
             return View(clientes);
         }
 
-        [HttpPost]
-        public IActionResult Index(string NomeBusca)
-        {
-            return RedirectToAction(nameof(Index), new { pagina = 1, NomeBusca = NomeBusca });
-        }
-
         [HttpGet]
         public IActionResult NovoCliente()
         {
