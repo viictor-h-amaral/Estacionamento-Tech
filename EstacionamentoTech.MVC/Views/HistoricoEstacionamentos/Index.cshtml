@@ -1,7 +1,40 @@
 ﻿@model IEnumerable<EstacionamentoTech.Models.HistoricoEstacionamentos>
 
+<style>
+	.pagination {
+		margin: 20px 0;
+	}
+
+	.pagination-info {
+		text-align: center;
+		margin-top: 10px;
+	}
+
+	.page-link {
+		color: #007bff;
+	}
+
+	.page-item.active .page-link {
+		background-color: #007bff;
+		border-color: #007bff;
+	}
+</style>
+
 @{
 	ViewData["Title"] = "Histórico de estacionamentos";
+
+	int paginaAtual = ViewBag.PaginaAtual ?? 1;
+	int totalPaginas = ViewBag.TotalPaginas ?? 1;
+
+	string placa = ViewBag.Placa ?? "";
+	string veiculo = ViewBag.Veiculo ?? "";
+	string entrada = ViewBag.Entrada ?? "";
+	string saida = ViewBag.Saida ?? "";
+
+	bool possuiFiltro = !string.IsNullOrEmpty(placa)
+						|| !string.IsNullOrEmpty(veiculo)
+						|| !string.IsNullOrEmpty(entrada)
+						|| !string.IsNullOrEmpty(saida);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -12,27 +45,26 @@
 
 <table class="table">
 
-	<form asp-action="FiltrarEstacionamento" method="post">
+	<form asp-action="Index" method="get">
 		<div class="form-group">
 			<div>
-				<h6>Placa:</h6> <input type="text" name="Placa" class="btn btn-outline-dark"
-								   value="@(TempData["Placa"]?.ToString() ?? "")">
+				<h6>Placa:</h6> <input type="text" name="Placa" value="@placa" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Veículo:</h6> <input type="text" name="Veiculo" class="btn btn-outline-dark"
-									 value="@(TempData["Veiculo"]?.ToString() ?? "")">
+				<h6>Veículo:</h6> <input type="text" name="Veiculo" value="@veiculo" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Entrada:</h6> <input type="date" name="Entrada" class="btn btn-outline-dark"
-									 value="@(TempData["Entrada"]?.ToString() ?? "")">
+				<h6>Entrada:</h6> <input type="date" name="Entrada" value="@entrada" class="btn btn-outline-dark">
 			</div>
 			<div>
-				<h6>Saída:</h6> <input type="date" name="Saida" class="btn btn-outline-dark"
-								   value="@(TempData["Saida"]?.ToString() ?? "")">
+				<h6>Saída:</h6> <input type="date" name="Saida" value="@saida" class="btn btn-outline-dark">
 			</div>
 			<br />
 			<input type="submit" value="Buscar" class="btn btn-primary" />
-			<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+			@if (possuiFiltro)
+			{
+				<a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+			}
 		</div>
 		<br />
 	</form>
@@ -122,3 +154,87 @@
 	</tbody>
 
 </table>
+
+<!-- Estrutura de paginação -->
+@if (totalPaginas > 1)
+{
+	<nav aria-label="Navegação de páginas">
+		<ul class="pagination">
+			<!-- Botão Anterior -->
+			@if (paginaAtual > 1)
+			{
+				<li class="page-item">
+					<a class="page-link" href="@Url.Action("Index", 
+									new {	pagina = paginaAtual - 1, 
+											registrosPorPagina = ViewBag.RegistrosPorPagina,	
+											Placa = placa,
+											Veiculo = veiculo,
+											Entrada = entrada,
+											Saida = saida})">
+						Anterior
+					</a>
+				</li>
+			}
+			else
+			{
+				<li class="page-item disabled">
+					<span class="page-link">Anterior</span>
+				</li>
+			}
+
+			<!-- Números das Páginas -->
+			@for (int i = 1; i <= totalPaginas; i++)
+			{
+				if (i == paginaAtual)
+				{
+					<li class="page-item active">
+						<span class="page-link">@i</span>
+					</li>
+				}
+				else
+				{
+					<li class="page-item">
+						<a class="page-link" href="@Url.Action("Index", 
+								new {	pagina = i, 
+										registrosPorPagina = ViewBag.RegistrosPorPagina, 
+										Placa = placa,
+										Veiculo = veiculo,
+										Entrada = entrada,
+										Saida = saida})">
+							@i
+						</a>
+					</li>
+				}
+			}
+
+			<!-- Botão Próximo -->
+			@if (paginaAtual < totalPaginas)
+			{
+				<li class="page-item">
+					<a class="page-link" href="@Url.Action("Index", 
+						new {	pagina = paginaAtual + 1, 
+								registrosPorPagina = ViewBag.RegistrosPorPagina, 
+								Placa = placa,
+								Veiculo = veiculo,
+								Entrada = entrada,
+								Saida = saida})">
+						Próximo
+					</a>
+				</li>
+			}
+			else
+			{
+				<li class="page-item disabled">
+					<span class="page-link">Próximo</span>
+				</li>
+			}
+		</ul>
+	</nav>
+}
+
+<!-- Informações da Paginação -->
+<div class="pagination-info">
+	<small class="text-muted">
+		Página @paginaAtual de @totalPaginas
+	</small>
+</div>

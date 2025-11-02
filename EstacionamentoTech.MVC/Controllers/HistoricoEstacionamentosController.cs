@@ -6,6 +6,7 @@ using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Enums;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Filtros;
 using EstacionamentoTech.MVC.Models.GeracaoArquivos;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
@@ -29,71 +30,42 @@ namespace EstacionamentoTech.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index( int pagina = 1, 
+                                    int registrosPorPagina = 10,
+                                    string? Placa = null,
+                                    string? Veiculo = null,
+                                    DateTime? Entrada = null,
+                                    DateTime? Saida = null)
         {
-            var historicos = _contexto.GetMany<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos());
+            int offSet = (pagina - 1) * registrosPorPagina;
+            var filtro = new FiltroSelecaoHistoricoEstacionamentos(Placa, Veiculo, Entrada, Saida);
+
+            var historicos = _contexto.GetManyComPaginacao<HistoricoEstacionamentos>(
+                new TabelaHistoricoEstacionamentos(),
+                offSet,
+                registrosPorPagina,
+                filtro.CriterioSelecao
+            );
+
             foreach (var historico in historicos)
             {
-                var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {historico.Veiculo}");
-                var nomeProprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}").Nome;
-
-                historico.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
-                historico.Proprietario = nomeProprietario;
+                var extensor = new HistoricoEstacionamentosExtensor(_contexto, historico);
+                extensor.CarregarDadosProprietarioVeiculo();
             }
+
+            var totalRegistros = (double)_contexto.Count<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), filtro.CriterioSelecao);
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / registrosPorPagina);
+
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.RegistrosPorPagina = registrosPorPagina;
+
+            ViewBag.Placa = filtro.Placa;
+            ViewBag.Veiculo = filtro.Veiculo;
+            ViewBag.Entrada = filtro.Entrada?.ToString("yyyy-MM-dd");
+            ViewBag.Saida = filtro.Saida?.ToString("yyyy-MM-dd");
 
             return View(historicos);
-        }
-
-        [HttpPost]
-        public IActionResult FiltrarEstacionamento(string? Placa = null,
-                                             string? Veiculo = null,
-                                             DateTime? Entrada = null,
-                                             DateTime? Saida = null)
-        {
-            string? criterioWhere = string.Empty;
-            if (!string.IsNullOrEmpty(Placa))
-            {
-                criterioWhere += @$" Veiculo IN (SELECT Id 
-                                                FROM estacionamentotechdb.veiculos
-                                                WHERE Placa LIKE '%{Placa}%' )";
-            }
-
-            if (!string.IsNullOrEmpty(Veiculo))
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 @$" Veiculo IN (SELECT Id 
-                                                FROM estacionamentotechdb.veiculos
-                                                WHERE Nome LIKE '%{Veiculo}%' )";
-            }
-
-            if (Entrada.HasValue)
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 @$" Saida >= '{Entrada.Value:yyyy-MM-dd}' ";
-            }
-
-            if (Saida != null)
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 $" Entrada <= '{Saida.Value:yyyy-MM-dd}' ";
-            }
-
-            var historicos = _contexto.GetMany<HistoricoEstacionamentos>(new TabelaHistoricoEstacionamentos(), $"{criterioWhere}");
-            foreach (var historico in historicos)
-            {
-                var veiculo = _contexto.GetOne<Veiculo>(new TabelaVeiculo(), $"id = {historico.Veiculo}");
-                var nomeProprietario = _contexto.GetOne<Cliente>(new TabelaClientes(), $"id = {veiculo.Cliente}").Nome;
-
-                historico.IdentificacaoVeiculo = veiculo.Placa.ToUpper() + ", " + veiculo.Nome?.ToUpper() ?? "";
-                historico.Proprietario = nomeProprietario;
-            }
-
-            TempData["Placa"] = Placa;
-            TempData["Veiculo"] = Veiculo;
-            TempData["Entrada"] = Entrada?.ToString("yyyy-MM-dd");
-            TempData["Saida"] = Saida?.ToString("yyyy-MM-dd");
-
-            return View(nameof(Index), historicos);
         }
 
         private IEnumerable<SelectListItem> BuscarVeiculos()
