@@ -18,8 +18,8 @@ namespace EstacionamentoTech.MVC.Models.Filtros
             if (string.IsNullOrEmpty(NomeCliente))
                 return;
 
-            CriterioSelecao = new CriterioSelecao($"Nome LIKE '%@PNOME%'");
-            CriterioSelecao.AdicionarParametro("@PNOME", NomeCliente);
+            CriterioSelecao = new CriterioSelecao($"A.NOME LIKE @PNOME");
+            CriterioSelecao.AdicionarParametro("@PNOME", "%" + NomeCliente + "%");
         }
     }
 }

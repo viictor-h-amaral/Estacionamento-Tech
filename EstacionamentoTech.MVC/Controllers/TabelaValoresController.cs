@@ -45,16 +45,16 @@ namespace EstacionamentoTech.MVC.Controllers
                 filtro.CriterioSelecao
             );
 
-            int totalRegistros = _contexto.Count<TabelaValores>(new TabelaTabelaValores(), filtro?.CriterioSelecao);
+            int totalRegistros = _contexto.Count<TabelaValores>(new TabelaTabelaValores(), filtro.CriterioSelecao);
             int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
             ViewBag.PaginaAtual = pagina;
             ViewBag.TotalPaginas = totalPaginas;
             ViewBag.RegistrosPorPagina = registrosPorPagina;
-            ViewBag.InicioVigencia = filtro?.InicioVigencia?.ToString("yyyy-MM-dd");
-            ViewBag.FimVigencia = filtro?.FimVigencia?.ToString("yyyy-MM-dd");
-            ViewBag.HoraInicial = filtro?.HoraInicial?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-            ViewBag.HoraAdicional = filtro?.HoraAdicional?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            ViewBag.InicioVigencia = filtro.InicioVigencia?.ToString("yyyy-MM-dd");
+            ViewBag.FimVigencia = filtro.FimVigencia?.ToString("yyyy-MM-dd");
+            ViewBag.HoraInicial = filtro.HoraInicial?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            ViewBag.HoraAdicional = filtro.HoraAdicional?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
 
             return View(vigencias);
         }
