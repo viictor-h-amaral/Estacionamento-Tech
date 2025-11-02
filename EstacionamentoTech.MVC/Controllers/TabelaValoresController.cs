@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using EstacionamentoTech.Data;
+using EstacionamentoTech.Data.Utilidades;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Filtros;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
@@ -25,50 +27,36 @@ namespace EstacionamentoTech.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
-        {
-            var vigencias = _contexto.GetMany<TabelaValores>(new TabelaTabelaValores());
-            return View(vigencias);
-        }
-
-        [HttpPost]
-        public IActionResult FiltrarVigencias( DateOnly? InicioVigencia = null,
-                                    DateOnly? FimVigencia = null, 
-                                    decimal? HoraInicial = null, 
+        public IActionResult Index(int pagina = 1, 
+                                    int registrosPorPagina = 10,
+                                    DateTime? InicioVigencia = null,
+                                    DateTime? FimVigencia = null,
+                                    decimal? HoraInicial = null,
                                     decimal? HoraAdicional = null)
         {
-            string? criterioWhere = string.Empty;
-            if (InicioVigencia.HasValue)
-            {
-                criterioWhere += $" DataFim >= '{InicioVigencia.Value:yyyy-MM-dd}' ";
-            }
+            var filtro = new FiltroSelecaoVigencias(InicioVigencia, FimVigencia, HoraInicial, HoraAdicional);
 
-            if (FimVigencia.HasValue)
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 $" DataInicio <= '{FimVigencia.Value:yyyy-MM-dd}' ";
-            }
+            int offSet = (pagina - 1) * registrosPorPagina;
 
-            if (HoraInicial.HasValue)
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 $" ValorHoraInicial = {HoraInicial.Value} ";
-            }
+            var vigencias = _contexto.GetManyComPaginacao<TabelaValores>(
+                new TabelaTabelaValores(),
+                offSet,
+                registrosPorPagina,
+                filtro.CriterioSelecao
+            );
 
-            if (HoraAdicional.HasValue)
-            {
-                criterioWhere += (criterioWhere != string.Empty ? " AND " : string.Empty) +
-                                 $" ValorHoraAdicional = {HoraAdicional.Value} ";
-            }
+            int totalRegistros = _contexto.Count<TabelaValores>(new TabelaTabelaValores(), filtro.CriterioSelecao);
+            int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-            var vigencias = _contexto.GetMany<TabelaValores>(new TabelaTabelaValores(), $"{criterioWhere}");
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.RegistrosPorPagina = registrosPorPagina;
+            ViewBag.InicioVigencia = filtro.InicioVigencia?.ToString("yyyy-MM-dd");
+            ViewBag.FimVigencia = filtro.FimVigencia?.ToString("yyyy-MM-dd");
+            ViewBag.HoraInicial = filtro.HoraInicial?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            ViewBag.HoraAdicional = filtro.HoraAdicional?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
 
-            TempData["InicioVigencia"] = InicioVigencia?.ToString("yyyy-MM-dd");
-            TempData["FimVigencia"] = FimVigencia?.ToString("yyyy-MM-dd");
-            TempData["HoraInicial"] = HoraInicial;
-            TempData["HoraAdicional"] = HoraAdicional;
-
-            return View(nameof(Index), vigencias);
+            return View(vigencias);
         }
 
         [HttpGet]

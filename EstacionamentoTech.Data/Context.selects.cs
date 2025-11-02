@@ -246,5 +246,87 @@ namespace EstacionamentoTech.Data
                 _connection.Close();
             }
         }
+
+        public IEnumerable<T> GetManyComPaginacao<T>(ITabela tabela, 
+                                                    int offSet = 0, 
+                                                    int limit = 10, 
+                                                    CriterioSelecao? criterioSelecao = null) where T : class, IEntityModel
+        {
+            var listaEntidades = new List<T>();
+
+            string whereClause = criterioSelecao == null ? string.Empty : $"WHERE {criterioSelecao.ClausulaWhere}";
+            string strComando = $@"SELECT * 
+                        FROM {dataBaseName}.{tabela.NomeTabela} A
+                        {whereClause}
+                        LIMIT {limit} 
+                        OFFSET {offSet}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                foreach (var parametro in criterioSelecao?.Parametros ?? new Dictionary<string, object?>())
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
+                using (MySqlDataReader leitorDados = comando.ExecuteReader())
+                {
+                    while (leitorDados.Read())
+                    {
+                        T entidade = Activator.CreateInstance<T>();
+                        foreach (var campo in tabela.CamposTabela)
+                        {
+                            var valor = leitorDados[campo.Key];
+                            if (valor != DBNull.Value)
+                            {
+                                entidade.GetType().GetProperty(campo.Key)?.SetValue(entidade, Convert.ChangeType(valor, campo.Value));
+                            }
+                        }
+                        listaEntidades.Add(entidade);
+                    }
+                }
+                return listaEntidades;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public int Count<T>(ITabela tabela, CriterioSelecao? criterioSelecao = null) where T : class, IEntityModel
+        {
+            string whereClause = criterioSelecao == null ? string.Empty : $"WHERE {criterioSelecao.ClausulaWhere}";
+            string strComando = $@" SELECT COUNT(*) 
+                                    FROM {dataBaseName}.{tabela.NomeTabela} A
+                                    {whereClause}";
+
+            try
+            {
+                _connection.Open();
+                var comando = new MySqlCommand(strComando, _connection);
+
+                foreach(var parametro in criterioSelecao?.Parametros ?? new Dictionary<string, object?>())
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
+                var resultado = comando.ExecuteScalar();
+                return Convert.ToInt32(resultado);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
     }
 }

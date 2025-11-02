@@ -3,6 +3,7 @@ using EstacionamentoTech.Data;
 using EstacionamentoTech.Models;
 using EstacionamentoTech.Models.Tabelas;
 using EstacionamentoTech.MVC.Models;
+using EstacionamentoTech.MVC.Models.Filtros;
 using EstacionamentoTech.MVC.Models.Validadores;
 using EstacionamentoTech.MVC.Models.Validadores.Estrutura;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +25,44 @@ namespace EstacionamentoTech.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int pagina = 1, int registrosPorPagina = 10, string? NomeBusca = null)
         {
-            var clientes = _contexto.GetMany<Cliente>(new TabelaClientes());
-            return View(clientes);
-        }
+            /* página N contém os registros desde
+             * (Último registro da última página + 1), que é o primeiro item da página N,
+             * até (Último registro da página N), 
+             * ou seja, de (N-1) * RegistrosPorPagina + 1
+             * até N * RegistrosPorPagina
+             * 
+             * => N * RegistrosPorPagina - ((N-1) * RegistrosPorPagina + 1) + 1
+             * = N * RegistrosPorPagina - (N-1) * RegistrosPorPagina - 1 + 1
+             * = N * RegistrosPorPagina - N * RegistrosPorPagina + RegistrosPorPagina - 1 + 1
+             * = RegistrosPorPagina itens na página N
+             * 
+             * Por isso offSet é o último item da página (N-1), ou
+             * (N-1) * RegistrosPorPagina.
+             * Exemplo: página 2 com 10 registros por página
+             * terá o offset = (2-1) * 10 = 10
+             */
 
-        [HttpPost]
-        public IActionResult Index(string NomeBusca)
-        {
-            var clientes = _contexto.GetMany<Cliente>(new TabelaClientes(), $"Nome LIKE '%{NomeBusca}%'");
-            TempData["NomeBusca"] = NomeBusca;
+            var filtro = new FiltroSelecaoClientes(NomeBusca);
+
+            int offSet = (pagina - 1) * registrosPorPagina;
+
+            var clientes = _contexto.GetManyComPaginacao<Cliente>(
+                new TabelaClientes(),
+                offSet,
+                registrosPorPagina,
+                filtro.CriterioSelecao
+            );
+
+            int totalRegistros = _contexto.Count<Cliente>(new TabelaClientes(), filtro?.CriterioSelecao);
+            int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.RegistrosPorPagina = registrosPorPagina;
+            ViewBag.NomeBusca = filtro?.NomeCliente;
+
             return View(clientes);
         }
 
