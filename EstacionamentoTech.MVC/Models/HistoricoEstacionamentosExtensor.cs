@@ -29,9 +29,9 @@ namespace EstacionamentoTech.MVC.Models
             }
         }
 
-        private readonly Context _contexto;
+        private readonly IContext _contexto;
 
-        public HistoricoEstacionamentosExtensor(Context contexto, HistoricoEstacionamentos estacionamento)
+        public HistoricoEstacionamentosExtensor(IContext contexto, HistoricoEstacionamentos estacionamento)
         {
             Estacionamento = estacionamento;
             _contexto = contexto;

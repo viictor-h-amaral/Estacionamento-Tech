@@ -8,9 +8,9 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 {
     public class VeiculoValidador : IValidador<Veiculo>
     {
-        private readonly Context _contexto;
+        private readonly IContext _contexto;
 
-        public VeiculoValidador(Context context)
+        public VeiculoValidador(IContext context)
         {
             _contexto = context;
         }

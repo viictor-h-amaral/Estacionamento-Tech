@@ -7,9 +7,9 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 {
     public class ClienteValidador : IValidador<Cliente>
     {
-        private readonly Context _contexto;
+        private readonly IContext _contexto;
 
-        public ClienteValidador(Context context)
+        public ClienteValidador(IContext context)
         {
             _contexto = context;
         }
@@ -24,7 +24,7 @@ namespace EstacionamentoTech.MVC.Models.Validadores
 
         public MensagemValidacao? ValidarNoDelete(Cliente cliente)
         {
-            if (_contexto.TemDependencias(cliente, new TabelaVeiculo(), "Cliente"))
+            if (_contexto.TemDependencias<Cliente>(cliente, new TabelaVeiculo(), "Cliente"))
                 return new MensagemValidacao("CLI_001");
 
             return null;
