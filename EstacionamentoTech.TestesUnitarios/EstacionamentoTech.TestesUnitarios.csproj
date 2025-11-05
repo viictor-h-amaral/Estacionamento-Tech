@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EstacionamentoTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EstacionamentoTech.Data\EstacionamentoTech.Data.csproj" />
     <ProjectReference Include="..\EstacionamentoTech.MVC\EstacionamentoTech.MVC.csproj" />
   </ItemGroup>
