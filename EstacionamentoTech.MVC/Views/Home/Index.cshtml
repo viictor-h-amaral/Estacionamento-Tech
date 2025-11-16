@@ -1,8 +1,75 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+
+    string mediaEstacionamentosCliente = ViewBag.MediaEstacionamentosCliente ?? "";
+    string mediaTempoEfetivoEstacionamentos = ViewBag.MediaTempoEfetivoEstacionamentos ?? "";
+    string mediaTempoCobradoEstacionamentos = ViewBag.MediaTempoCobradoEstacionamentos ?? "";
+    string clienteComMaisEstacionamentos = ViewBag.ClienteComMaisEstacionamentos ?? "";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .default-tile{
+        background-color: #0084e3;
+        color: white;
+        border-radius: 5px;
+        border: 2px;
+        padding: 1px;
+        width: auto;
+        height: fit-content;
+    }
+
+    .valor-tile{
+        padding: 5px;
+        font-size: large;
+        text-align: left;
+        vertical-align: top;
+        font-weight: bold;
+    }
+
+    .info-tile{
+        padding: 5px;
+        font-size: medium;
+        text-align: left;
+        vertical-align: bottom;
+        font-weight: lighter;
+    }
+
+</style>
+
+<div>
+    <h1>🏡 Home</h1>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col">
+        <div class="default-tile">
+            <div class="valor-tile">@mediaEstacionamentosCliente</div>
+            <div class="info-tile">Média de estacionamentos por cliente</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="default-tile">
+            <div class="valor-tile">@mediaTempoEfetivoEstacionamentos</div>
+            <div class="info-tile">Média de tempo efetivo dos estacionamentos</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="default-tile">
+            <div class="valor-tile">@mediaTempoCobradoEstacionamentos</div>
+            <div class="info-tile">Média de tempo cobrado dos estacionamentos</div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col">
+        <div class="default-tile">
+            <div class="valor-tile">@clienteComMaisEstacionamentos</div>
+            <div class="info-tile">Cliente com maior número de estacionamentos</div>
+        </div>
+    </div>
 </div>
