@@ -26,19 +26,21 @@ namespace EstacionamentoTech.Data
                                                                             .GetProperty(c)?
                                                                             .GetValue(registro) != null);
 
-            string campos = string.Join(", ", listaCampos);
-            string values = string.Join(", ", listaCampos.Select(c => GerarParametro(c)));
-
             var parametros = new Dictionary<string, object?>();
-            foreach(string campo in listaCampos)
+            var valuesClause = new List<string>();
+
+            foreach (string campo in listaCampos)
             {
+                var parametroNome = GerarParametro(campo);
                 object? valorCampo = registro.GetType().GetProperty(campo)?.GetValue(registro);
-                parametros[GerarParametro(campo)] = valorCampo; //ObjetoParaStringConversor.ConverterParaString(valorCampo);
+                parametros[parametroNome] = valorCampo;
+
+                valuesClause.Add(parametroNome);
             }
 
             string strComando = $@"INSERT INTO 
-                                {dataBaseName}.{tabela.NomeTabela}({campos})
-                                VALUES ({values})";
+                                {dataBaseName}.{tabela.NomeTabela}({string.Join(", ", listaCampos)})
+                                VALUES ({string.Join(", ", valuesClause)})";
 
             try
             {
@@ -64,38 +66,39 @@ namespace EstacionamentoTech.Data
 
         public void Update(ITabela tabela, IEntityModel registro)
         {
-            IDictionary<string, string> campoValor = new Dictionary<string, string>();
+            IEnumerable<string> campos = tabela.CamposTabela
+                                                .Keys
+                                                .Where(c => registro
+                                                                .GetType()
+                                                                .GetProperty(c)?
+                                                                .GetValue(registro) != null);
 
-            IList<string> campos = tabela.CamposTabela.Keys.Where(c =>
-                                                                    !c.Equals("id", StringComparison.CurrentCultureIgnoreCase)
-                                                                        && 
-                                                                    registro
-                                                                        .GetType()
-                                                                        .GetProperty(c)?
-                                                                        .GetValue(registro) != null
-                                                                )
-                                                            .ToList();
+            var parametros = new Dictionary<string, object?>();
+            var setClause = new List<string>();
+
             foreach (string campo in campos)
             {
-                string valor = ObjetoParaStringConversor
-                                .ConverterParaString(registro
-                                                        .GetType()
-                                                        .GetProperty(campo)?
-                                                        .GetValue(registro));
-                campoValor.Add(campo, valor);
+                string parametroNome = GerarParametro(campo);
+                object? valorCampo = registro.GetType().GetProperty(campo)?.GetValue(registro);
+                parametros[parametroNome] = valorCampo;
+
+                setClause.Add($"{campo} = {parametroNome}");
             }
 
-            string strComando = $@"UPDATE  
-                                {dataBaseName}.{tabela.NomeTabela}
-                                SET {
-                                        string.Join(", ", campoValor.Keys.Select(c => $"{c} = {campoValor[c]}") )
-                                    }
-                                WHERE Id = {registro.Id}";
+            string strComando = $@"UPDATE {dataBaseName}.{tabela.NomeTabela}
+                                   SET {string.Join(", ", setClause)}
+                                   WHERE ID = @ID";
 
             try
             {
                 _connection.Open();
                 var comando = new MySqlCommand(strComando, _connection);
+
+                foreach (var parametro in parametros)
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
                 comando.ExecuteNonQuery();
             }
             catch (Exception ex)
