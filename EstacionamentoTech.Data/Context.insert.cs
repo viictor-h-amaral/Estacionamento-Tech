@@ -1,5 +1,7 @@
-﻿using EstacionamentoTech.Data.Utilidades;
+﻿using System.Reflection.Metadata.Ecma335;
+using EstacionamentoTech.Data.Utilidades;
 using EstacionamentoTech.Models;
+using EstacionamentoTech.Models.Atributos;
 using EstacionamentoTech.Models.Tabelas;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Asn1;
@@ -25,15 +27,14 @@ namespace EstacionamentoTech.Data
                                                                             .GetValue(registro) != null);
 
             string campos = string.Join(", ", listaCampos);
+            string values = string.Join(", ", listaCampos.Select(c => GerarParametro(c)));
 
-            string values = string.Join(", ", listaCampos
-                                                    .Select(c => 
-                                                    {
-                                                        var valor = registro.GetType().GetProperty(c)?.GetValue(registro);
-                                                        return ObjetoParaStringConversor
-                                                                .ConverterParaString(valor);
-                                                    })
-                                       );
+            var parametros = new Dictionary<string, object?>();
+            foreach(string campo in listaCampos)
+            {
+                object? valorCampo = registro.GetType().GetProperty(campo)?.GetValue(registro);
+                parametros[GerarParametro(campo)] = valorCampo; //ObjetoParaStringConversor.ConverterParaString(valorCampo);
+            }
 
             string strComando = $@"INSERT INTO 
                                 {dataBaseName}.{tabela.NomeTabela}({campos})
@@ -43,6 +44,12 @@ namespace EstacionamentoTech.Data
             {
                 _connection.Open();
                 var comando = new MySqlCommand(strComando, _connection);
+
+                foreach (var parametro in parametros)
+                {
+                    comando.Parameters.AddWithValue(parametro.Key, parametro.Value);
+                }
+
                 comando.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -99,6 +106,11 @@ namespace EstacionamentoTech.Data
             {
                 _connection.Close();
             }
+        }
+
+        private string GerarParametro(string campo)
+        {
+            return "@" + campo.ToUpper();
         }
 
     }
