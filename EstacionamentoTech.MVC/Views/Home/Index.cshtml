@@ -5,11 +5,29 @@
     string mediaTempoEfetivoEstacionamentos = ViewBag.MediaTempoEfetivoEstacionamentos ?? "";
     string mediaTempoCobradoEstacionamentos = ViewBag.MediaTempoCobradoEstacionamentos ?? "";
     string clienteComMaisEstacionamentos = ViewBag.ClienteComMaisEstacionamentos ?? "";
+    string estacionamentosEmAberto = ViewBag.QuantidadeEstacionamentosEmAberto ?? "";
+    string veiculosAPagar = ViewBag.VeiculosAPagar ?? "";
+
+    string inicio = ViewBag.Inicio ?? "";
+    string fim = ViewBag.Fim ?? "";
+
+    bool possuiFiltro = !string.IsNullOrEmpty(inicio)
+                        || !string.IsNullOrEmpty(fim);
 }
 
 <style>
     .default-tile{
         background-color: #0084e3;
+        color: white;
+        border-radius: 5px;
+        border: 2px;
+        padding: 1px;
+        width: auto;
+        height: fit-content;
+    }
+
+    .danger-tile {
+        background-color: indianred;
         color: white;
         border-radius: 5px;
         border: 2px;
@@ -39,6 +57,24 @@
 <div>
     <h1>🏡 Home</h1>
 </div>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <div>
+            <h6>Entrada:</h6> <input type="date" name="Inicio" value="@inicio" class="btn btn-outline-dark">
+        </div>
+        <div>
+            <h6>Saída:</h6> <input type="date" name="Fim" value="@fim" class="btn btn-outline-dark">
+        </div>
+        <br />
+        <input type="submit" value="Buscar" class="btn btn-primary" />
+        @if (possuiFiltro)
+        {
+            <a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+        }
+    </div>
+    <br />
+</form>
 
 <br />
 
@@ -70,6 +106,23 @@
         <div class="default-tile">
             <div class="valor-tile">@clienteComMaisEstacionamentos</div>
             <div class="info-tile">Cliente com maior número de estacionamentos</div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col">
+        <div class="danger-tile">
+            <div class="valor-tile">@estacionamentosEmAberto</div>
+            <div class="info-tile">Veículos estacionados no momento</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="danger-tile">
+            <div class="valor-tile">@veiculosAPagar</div>
+            <div class="info-tile">Veículos a pagar</div>
         </div>
     </div>
 </div>
