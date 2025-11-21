@@ -9,7 +9,7 @@ namespace EstacionamentoTech.Data
     public partial class Context : IContext
     {
         private MySqlConnection _connection;
-        private string dataBaseName = "estacionamentotechdb";
+        private readonly string dataBaseName = "estacionamentotechdb";
         public Context() 
         {
             _connection = new MySqlConnection(Conexao.strConexao);

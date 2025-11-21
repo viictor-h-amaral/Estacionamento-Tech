@@ -50,7 +50,7 @@ namespace EstacionamentoTech.MVC.Models.Filtros
                 parametros["@ENTRADA"] = Entrada;
             }
 
-            if (Saida != null)
+            if (Saida.HasValue)
             {
                 criterioWhere.Add($" ENTRADA <= @SAIDA ");
                 parametros["@SAIDA"] = Saida;
